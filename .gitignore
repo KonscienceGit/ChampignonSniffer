@@ -1,0 +1,13 @@
+out
+.idea
+bin
+.git
+.settings
+.classpath
+.gitattributes
+.project
+lib
+extlib
+ChampignonSniffer.iml
+
+src/META-INF
