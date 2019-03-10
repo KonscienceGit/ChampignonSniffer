@@ -1,6 +1,9 @@
+import dataclasses.Star;
+import dataclasses.StarSystem;
 import gui.BasicLogScreen;
 import gui.ChampignonScreen;
 import resources.Resources;
+import static resources.CommonMethods.*;
 
 import java.io.*;
 import java.util.Vector;
@@ -20,9 +23,10 @@ public class Main {
     private static File journalFile = null;
 
     //General Status vars
+    private static StarSystem _starSystem = null;
     private static boolean haveFuelScoop = false;
-    private static boolean nextStarIsScoopable = false;
-    private static String nextStarClass = "?";
+    private static boolean _nextStarIsScoopable = false;
+    private static String _nextStarClass = "?";
     private static Vector<String> starClassVec = new Vector<>();
     private static float currentFuelLevel = 30.0f;
     private static float currentFuelCapacity = 40.0f;
@@ -55,7 +59,7 @@ public class Main {
             }
         }
         exitPrompt();
-    }//end of main method
+    }
 
 
     /////////////////////////////////
@@ -97,7 +101,7 @@ public class Main {
         if (errorLoading){
             exitPrompt();
         }
-    }//end getLastJournal
+    }
     private static Vector<String> readFile(File file, Long fileLength) throws IOException {
         String line;
         Vector<String> content = new Vector<>();
@@ -135,45 +139,7 @@ public class Main {
         System.exit(0);
     }
 
-    //Parsing text
-    private static String getStrContentOf(String catName, String line){
-        catName = "\""+catName+"\":\"";
-        int pos = line.indexOf(catName);
-        if (pos != -1 ) {
-            int posBegin = pos + catName.length();
-            int posEnd = line.indexOf('\"', posBegin);
-            return line.substring(posBegin, posEnd);
-        }else{
-            return "";
-        }
-    }
-    private static String getFromIndexStrContentOf(String catName, String line, int offset){
-        catName = "\""+catName+"\":\"";
-        int pos = line.indexOf(catName, offset);
-        if (pos != -1 ) {
-            int posBegin = pos + catName.length();
-            int posEnd = line.indexOf('\"', posBegin);
-            return line.substring(posBegin, posEnd);
-        }else{
-            return "";
-        }
-    }
-    private static float getNumContentOf(String catName, String line){
-        catName = "\""+catName+"\":";
-        int pos = line.indexOf(catName);
-        if (pos != -1 ) {
-            int posBegin = pos + catName.length();
-            //Numbers aren't encased in "" so they end with either a coma or a space.... or a } ?
-            int posEnd = line.indexOf(',', posBegin);
-            if(posEnd == -1){posEnd= line.indexOf(' ', posBegin);}
-            if(posEnd == -1){posEnd= line.indexOf('}', posBegin);}
-            return Float.valueOf(line.substring(posBegin, posEnd));
-        }else{
-            System.out.println("Parsing error??");//TODO DEBUG
-            return 0.0f;
-        }
-    }//end of getNumContentOf
-    //Big Switch Case
+        //Big Switch Case
     private static void parseLineAndHandleEvents(String line){
         String eventName = getStrContentOf("event", line);
         switch (eventName){
@@ -211,18 +177,17 @@ public class Main {
                 //System.out.println("Unknown event: ");
                 //System.out.println(line);
         }//end switch case
-        System.out.println(line);
-    }//end of parseLineAndHandleEvents
+        //System.out.println(line);
+    }
 
     //Switch case Events
     private static void handleLoadGameEvent(String line){
         String shipName = getStrContentOf("Ship",line).replace("_"," ");
         champignonScreen.setgShipModelLabel(shipName);
         champignonScreen.setgShipNameLabel(getStrContentOf("ShipName",line));
-        //champignonScreen.setgShipIDLabel(getStrContentOf("ShipIdent",line));
-        champignonScreen.setgMoneyLabel((int)getNumContentOf("Credits",line));
-        currentFuelLevel = getNumContentOf("FuelLevel",line);
-        currentFuelCapacity = getNumContentOf("FuelCapacity",line);
+        champignonScreen.setgMoneyLabel(getIntContentOf("Credits",line));
+        currentFuelLevel = getFloatContentOf("FuelLevel",line);
+        currentFuelCapacity = getFloatContentOf("FuelCapacity",line);
         champignonScreen.setgFuelLabel(currentFuelLevel,currentFuelCapacity);
         champignonScreen.setcGameModeLabel(getStrContentOf("GameMode",line));
     }
@@ -277,7 +242,7 @@ public class Main {
         "Population":0, "Body":"Swoiwns TD-Z b18-0", "BodyID":0, "BodyType":"Star" }
         */
         champignonScreen.setgSystemLabel(getStrContentOf("StarSystem",line));
-        champignonScreen.setgSystemPopulationLabel((int)getNumContentOf("Population",line));
+        champignonScreen.setgSystemPopulationLabel(getIntContentOf("Population",line));
         String security = getStrContentOf("SystemSecurity",line);
         if(security.equals("$GAlAXY_MAP_INFO_state_anarchy;")){
             champignonScreen.setgSystemSecurityLabel("");
@@ -312,20 +277,27 @@ public class Main {
             //System.out.println("Body ID: "+getNumContentOf("BodyID",line)+"Star class: "+getStrContentOf("StarType",line));
             champignonScreen.updateStarClasses(starClassVec);
         }
-
         //event += state + ", Name: " + getStrContentOf("BodyName", line) + ", Class: " + getStrContentOf("PlanetClass", line);
+
+        if (_starSystem == null){
+            System.out.println("_starSystem hasn't been initialized !");
+        } else {
+            _starSystem.addBody(line);
+        }
     }//TODO handle case of handsome body (blackhole, neutron, etc) Rings, in bodies and standalone ring-cluster bodies, only with a detailed surface scanner so its optional
     private static void handleFSDTargetEvent(String line){
         //{ "timestamp":"2019-02-02T11:27:00Z", "event":"FSDTarget", "Name":"Swoiwns ZE-X b19-0", "SystemAddress":667194959529 }
     }
     private static void handleStartJumpEvent(String line){
-        //"JumpType":"Hyperspace", "dataclasses":"Swoiwns UU-E b29-0", "SystemAddress":666926262009, "StarClass":"M"
+        //"event":"StartJump", "JumpType":"Hyperspace", "StarSystem":"Prooe Hypue SF-L d9-264", "SystemAddress":9081582505171, "StarClass":"A"
         if(line.contains("Hyperspace")){
-            nextStarClass = getStrContentOf("StarClass", line);
-            nextStarIsScoopable = Resources.hydrogenStarClass.contains(nextStarClass);
+            _starSystem = new StarSystem(line);
+            Star mainStar = (Star)_starSystem._systemMap.get(0);
+            _nextStarClass = mainStar._starType;
+            _nextStarIsScoopable = Resources.hydrogenStarClass.contains(_nextStarClass);
             checkFuelStatus(true);
         }
-    }//TODO check if Security/inhabited System is mentionned, then adapt checkFuelStatus
+    }
     private static void handleFSDJumpEvent(String line){
         /*{
         "timestamp":"2019-02-02T15:53:39Z", "event":"FSDJump",
@@ -341,13 +313,13 @@ public class Main {
         champignonScreen.updateStarClasses(starClassVec);
 
         //Updating Fuel values
-        currentFuelLevel = getNumContentOf("FuelLevel", line);
+        currentFuelLevel = getFloatContentOf("FuelLevel", line);
         champignonScreen.setgFuelLabel(currentFuelLevel,currentFuelCapacity);
 
         //Updating System properties
         champignonScreen.setgSystemLabel(getStrContentOf("StarSystem",line));
-        champignonScreen.setgSystemPopulationLabel((int)getNumContentOf("Population",line));
-        champignonScreen.setgMainStarClassLabel(nextStarClass);
+        champignonScreen.setgSystemPopulationLabel(getIntContentOf("Population",line));
+        champignonScreen.setgMainStarClassLabel(_nextStarClass);
         String security = getStrContentOf("SystemSecurity",line);
         if(security.equals("$GAlAXY_MAP_INFO_state_anarchy;")){
             champignonScreen.setgSystemSecurityLabel("");
@@ -355,6 +327,14 @@ public class Main {
             champignonScreen.setgSystemSecurityLabel(getStrContentOf("SystemSecurity_Localised",line));
         }
         champignonScreen.setgSystemAllegianceLabel(getStrContentOf("SystemAllegiance",line));
+
+        //WIP StarSystem HashMap
+        if (_starSystem == null){
+            _starSystem = new StarSystem(line);
+            System.out.println("_starSystem wasn't initialised yet, missing info!");
+        }
+        _starSystem._starPos = getStarPos(line);
+        _starSystem._systemAddress = getLongContentOf("SystemAddress",line);
     }
     private static void handleFSSSignalDiscoveredEvent(String line){
         //"SignalName_Localised":"Notable stellar phenomena"
@@ -364,14 +344,17 @@ public class Main {
         System.out.println("SignalName_Localised: "+getStrContentOf("SignalName_Localised", line));
     }//TODO make a lookup table of usual events, is TimeRemaining a good indicator of a relevant signal?
     private static void handleFSSDiscoveryScanEvent(String line){
-        //"event":"FSSDiscoveryScan", "Progress":1.000000, "BodyCount":15, "NonBodyCount":0 //TODO
-        int nbNonBody = (int)getNumContentOf("NonBodyCount", line);
-        if (nbNonBody > 0){
-            System.out.println("NonBodyCount: "+nbNonBody);
+        //"event":"FSSDiscoveryScan", "Progress":1.000000, "BodyCount":15, "NonBodyCount":0
+        if (_starSystem == null){
+            System.out.println("_starSystem hasn't been initialized !");
+        } else {
+            _starSystem._progress = getFloatContentOf("Progress", line);
+            _starSystem._bodyCount = getIntContentOf("BodyCount", line);
+            _starSystem._nonBodyCount = getIntContentOf("NonBodyCount", line);
         }
     }
     private static void handleFuelScoopEvent(String line){
-        currentFuelLevel = getNumContentOf("Total",line);
+        currentFuelLevel = getFloatContentOf("Total",line);
         champignonScreen.setgFuelLabel(currentFuelLevel,currentFuelCapacity);
         basicLogScreen.addEvent("Refueling: Fuel at "+(int)(100*currentFuelLevel/currentFuelCapacity)+"%");
     }
@@ -386,7 +369,7 @@ public class Main {
                 if(!haveFuelScoop){
                     eventMsg += "NO FUEL SCOOP ONBOARD! ";
                 }
-                if (!nextStarIsScoopable){
+                if (!_nextStarIsScoopable){
                     eventMsg += "NEXT STAR NOT MAIN-SEQUENCE! ";
                 }
             }//end if jumping
@@ -397,7 +380,7 @@ public class Main {
                 if(!haveFuelScoop){
                     eventMsg += "No fuel scoop on board! ";
                 }
-                if (!nextStarIsScoopable){
+                if (!_nextStarIsScoopable){
                     eventMsg += "Next star is not a main-sequece star! ";
                 }
             }//end if jumping
