@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ChampignonSniffer:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ChampignonSniffer_jar</output-path>
+    <root id="archive" name="ChampignonSniffer.jar">
+      <element id="module-output" name="ChampignonSniffer" />
+    </root>
+  </artifact>
+</component>
