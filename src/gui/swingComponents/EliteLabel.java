@@ -1,21 +1,21 @@
-package gui;
+package gui.swingComponents;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-import static resources.Resources.backScreenEliteColor;
-import static resources.Resources.textEliteColor;
+import static resources.Constants.backScreenEliteColor;
+import static resources.Constants.textEliteColor;
 
-class EliteLabel extends JLabel {
+public class EliteLabel extends JLabel {
     static final int fontSize = 28;
 
-    EliteLabel() {
+    public EliteLabel() {
         super();
         setThings();
     }
 
-    EliteLabel(String string) {
+    public EliteLabel(String string) {
         super(string);
         setThings();
     }

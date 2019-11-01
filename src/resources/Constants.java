@@ -4,7 +4,7 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
-public abstract class Resources {
+public abstract class Constants {
     public static final Color invisibleColor = new Color(0, 0, 0,0);
     public static final Color textEliteColor = new Color(255, 111, 0);
     public static final Color textEliteTrColor = new Color(255, 111, 0);
@@ -61,6 +61,4 @@ public abstract class Resources {
         put("Int_Hyperdrive_Size7_Class5",12.80f);
         }
     };
-
-
 }

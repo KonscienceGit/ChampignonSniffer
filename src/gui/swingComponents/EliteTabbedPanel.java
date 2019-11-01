@@ -1,8 +1,8 @@
-package gui;
+package gui.swingComponents;
 
 import javax.swing.*;
 
-import static resources.Resources.*;
+import static resources.Constants.*;
 
 public class EliteTabbedPanel extends JTabbedPane {
     public EliteTabbedPanel() {

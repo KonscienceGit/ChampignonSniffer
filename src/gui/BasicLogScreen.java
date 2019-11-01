@@ -8,7 +8,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.Collections;
 import java.util.Vector;
 
-import static resources.Resources.*;
+import static resources.Constants.*;
 
 public class BasicLogScreen extends JFrame {
     private JPanel mainPannel;

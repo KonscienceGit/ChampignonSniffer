@@ -2,14 +2,14 @@ import dataclasses.Star;
 import dataclasses.StarSystem;
 import gui.BasicLogScreen;
 import gui.ChampignonScreen;
-import resources.Resources;
+import resources.Constants;
 import static resources.CommonMethods.*;
 
 import java.io.*;
 import java.util.Vector;
 
-import static resources.Resources.fsdFuelMap;
-import static resources.Resources.knownStars;
+import static resources.Constants.fsdFuelMap;
+import static resources.Constants.knownStars;
 
 public class Main {
     //Main logic & File reading vars
@@ -294,7 +294,7 @@ public class Main {
             _starSystem = new StarSystem(line);
             Star mainStar = (Star)_starSystem._systemMap.get(0);
             _nextStarClass = mainStar._starType;
-            _nextStarIsScoopable = Resources.hydrogenStarClass.contains(_nextStarClass);
+            _nextStarIsScoopable = Constants.hydrogenStarClass.contains(_nextStarClass);
             checkFuelStatus(true);
         }
     }

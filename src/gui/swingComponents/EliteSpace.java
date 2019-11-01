@@ -1,9 +1,9 @@
-package gui;
+package gui.swingComponents;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static resources.Resources.blackEliteColor;
+import static resources.Constants.blackEliteColor;
 
 public class EliteSpace extends JSeparator {
     public EliteSpace(int arg) {

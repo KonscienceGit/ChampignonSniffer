@@ -1,10 +1,10 @@
-package gui;
+package gui.swingComponents;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static resources.Resources.blackEliteColor;
-import static resources.Resources.textEliteColor;
+import static resources.Constants.blackEliteColor;
+import static resources.Constants.textEliteColor;
 
 public class EliteSeparator extends JSeparator {
     public EliteSeparator(int arg) {

@@ -1,11 +1,13 @@
 package gui;
 
+import gui.swingComponents.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 
-import static resources.Resources.*;
+import static resources.Constants.*;
 
 public final class ChampignonScreen extends JFrame implements ActionListener {
     //Boolean states for buttons
