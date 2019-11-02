@@ -3,7 +3,7 @@ package gui.swingComponents;
 import javax.swing.*;
 import java.awt.*;
 
-import static resources.Constants.blackEliteColor;
+import static tools.Constants.BLACK_ELITE_COLOR;
 
 public class EliteSpace extends JSeparator {
     public EliteSpace(int arg) {
@@ -14,7 +14,7 @@ public class EliteSpace extends JSeparator {
             setPreferredSize(new Dimension(4096,1));
         }
 
-        setBackground(blackEliteColor);
-        setForeground(blackEliteColor);
+        setBackground(BLACK_ELITE_COLOR);
+        setForeground(BLACK_ELITE_COLOR);
     }
 }

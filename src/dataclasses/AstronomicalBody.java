@@ -1,7 +1,5 @@
 package dataclasses;
 
-import static resources.CommonMethods.getIntContentOf;
-
 public abstract class AstronomicalBody {
     public static final int BODY_STAR = 0;
     public static final int BODY_BELT = 1;

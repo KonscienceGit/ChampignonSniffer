@@ -1,6 +1,6 @@
 package dataclasses;
 
-import static resources.CommonMethods.*;
+import static tools.JsonParser.*;
 
 public class Star extends AstronomicalBody {
     /*String _detailedScanContent = "";
@@ -61,5 +61,4 @@ public class Star extends AstronomicalBody {
         System.out.println("_rotationPeriod : "+_rotationPeriod);
         System.out.println("_axialTilt : "+_axialTilt);
     }
-
 }

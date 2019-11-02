@@ -1,8 +1,8 @@
-package resources;
+package tools;
 
 import java.util.Arrays;
 
-public abstract class CommonMethods {
+public abstract class JsonParser {
 
     //Parsing text
     public static String getStrContentOf(String catName, String line){
@@ -41,7 +41,7 @@ public abstract class CommonMethods {
             int posEnd = line.indexOf(',', posBegin);
             if(posEnd == -1){posEnd= line.indexOf(' ', posBegin);}
             if(posEnd == -1){posEnd= line.indexOf('}', posBegin);}
-            return Float.valueOf(line.substring(posBegin, posEnd));
+            return Float.parseFloat(line.substring(posBegin, posEnd));
         }else{
             printStack();
             System.out.println("Line: " +getLineNumber()+" getFloatContentOf: Parsing error??");
@@ -57,7 +57,7 @@ public abstract class CommonMethods {
             int posEnd = line.indexOf(',', posBegin);
             if(posEnd == -1){posEnd= line.indexOf(' ', posBegin);}
             if(posEnd == -1){posEnd= line.indexOf('}', posBegin);}
-            return Integer.valueOf(line.substring(posBegin, posEnd));
+            return Integer.parseInt(line.substring(posBegin, posEnd));
         }else{
             printStack();
             System.out.println("Line: " +getLineNumber()+" getIntContentOf: Parsing error??");
@@ -73,7 +73,7 @@ public abstract class CommonMethods {
             int posEnd = line.indexOf(',', posBegin);
             if(posEnd == -1){posEnd= line.indexOf(' ', posBegin);}
             if(posEnd == -1){posEnd= line.indexOf('}', posBegin);}
-            return Long.valueOf(line.substring(posBegin, posEnd));
+            return Long.parseLong(line.substring(posBegin, posEnd));
         }else{
             printStack();
             System.out.println("Line: " +getLineNumber()+" getLongContentOf: Parsing error??");
@@ -89,7 +89,7 @@ public abstract class CommonMethods {
             int posEnd = line.indexOf(',', posBegin);
             if(posEnd == -1){posEnd= line.indexOf(' ', posBegin);}
             if(posEnd == -1){posEnd= line.indexOf('}', posBegin);}
-            return Double.valueOf(line.substring(posBegin, posEnd));
+            return Double.parseDouble(line.substring(posBegin, posEnd));
         }else{
             printStack();
             System.out.println("Line: " +getLineNumber()+" getDoubleContentOf: Parsing error??");
@@ -121,13 +121,13 @@ public abstract class CommonMethods {
             double[] result = new double[3];
             int posBegin = line.indexOf("[")+1;
             int posEnd = line.indexOf(',', posBegin);
-            result[0] = Double.valueOf(line.substring(posBegin, posEnd));
+            result[0] = Double.parseDouble(line.substring(posBegin, posEnd));
             posBegin = posEnd +1;
             posEnd = line.indexOf(',', posBegin);
-            result[1] = Double.valueOf(line.substring(posBegin, posEnd));
+            result[1] = Double.parseDouble(line.substring(posBegin, posEnd));
             posBegin = posEnd +1;
             posEnd = line.indexOf(']', posBegin);
-            result[2] = Double.valueOf(line.substring(posBegin, posEnd));
+            result[2] = Double.parseDouble(line.substring(posBegin, posEnd));
             return result;
         }else{
             printStack();
@@ -178,14 +178,13 @@ public abstract class CommonMethods {
     /** Get the current line number.
      * @return int - Current line number.
      */
-    public static int getLineNumber() {
+    private static int getLineNumber() {
         return Thread.currentThread().getStackTrace()[2].getLineNumber();
     }
 
     /** Get the last trace line.
-     * @return String - Last stack trace.
      */
-    public static void printStack() {
+    private static void printStack() {
         String stack = Arrays.toString(Thread.currentThread().getStackTrace());
         System.out.println(stack);
     }

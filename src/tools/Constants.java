@@ -1,21 +1,24 @@
-package resources;
+package tools;
 
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
 public abstract class Constants {
-    public static final Color invisibleColor = new Color(0, 0, 0,0);
-    public static final Color textEliteColor = new Color(255, 111, 0);
-    public static final Color textEliteTrColor = new Color(255, 111, 0);
-    public static final Color backScreenEliteColor = new Color(26, 16, 15);
-    public static final Color backScreenEliteTrColor = new Color(26, 16, 15, 150);
-    public static final Color blackEliteColor = new Color(16, 16, 16);
-    public static final Color blackEliteTrColor = new Color(16, 16, 16, 10);
-    public static final DecimalFormat df = new DecimalFormat("#.##");
-    public static final Font eliteFontPlain28 = new Font("Dosis", Font.PLAIN, 28);
-    public static final HashMap<String, Color> starClassColorMap = new HashMap<String, Color>(){
-        {
+    public static final String PROGRAM_NAME = "Champignon Sniffer 3000";
+    public static final String PROGRAM_VERSION = "20191102";
+
+    public static final Color INVISIBLE_COLOR = new Color(0, 0, 0,0);
+    public static final Color TEXT_ELITE_COLOR = new Color(255, 111, 0);
+    public static final Color TEXT_ELITE_TR_COLOR = new Color(255, 111, 0);
+    public static final Color BACK_SCREEN_ELITE_COLOR = new Color(26, 16, 15);
+    public static final Color BACK_SCREEN_ELITE_TR_COLOR = new Color(26, 16, 15, 150);
+    public static final Color BLACK_ELITE_COLOR = new Color(16, 16, 16);
+    public static final Color BLACK_ELITE_TR_COLOR = new Color(16, 16, 16, 10);
+    public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
+    public static final Font ELITE_FONT_PLAIN_28 = new Font("Dosis", Font.PLAIN, 28);
+
+    public static final HashMap<String, Color> STAR_CLASS_COLOR_MAP = new HashMap<String, Color>(){{
             put("O",new Color(146, 181, 255));
             put("B",new Color(162, 192, 255));
             put("A",new Color(213, 224, 255));
@@ -23,11 +26,10 @@ public abstract class Constants {
             put("G",new Color(255, 237, 227));
             put("K",new Color(255, 218, 181));
             put("M",new Color(255, 155, 61));
-        }
-    };
-    public static final String knownStars = "OBAFGKM";
-    public static final String hydrogenStarClass = "OBAFGKM";
-    public static final HashMap<String, Float> fsdFuelMap = new HashMap<String, Float>(){
+    }};
+
+    public static final String HYDROGEN_STAR_CLASS = "OBAFGKM";
+    public static final HashMap<String, Float> FSD_FUEL_MAP = new HashMap<String, Float>(){
         {
         put("Int_Hyperdrive_Size2_Class1",0.60f);
         put("Int_Hyperdrive_Size2_Class2",0.60f);

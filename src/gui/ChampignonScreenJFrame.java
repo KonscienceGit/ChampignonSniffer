@@ -1,38 +1,27 @@
 package gui;
 
+import controller.Controller;
 import gui.swingComponents.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
+import static tools.Constants.*;
 
-import static resources.Constants.*;
+public final class ChampignonScreenJFrame extends JFrame implements ActionListener {
+    private Controller _controller;
+    private static final int _maxStarClassMapSize = 10;
 
-public final class ChampignonScreen extends JFrame implements ActionListener {
-    //Boolean states for buttons
-    private boolean needToReload = false;
-    public void setNeedToReload(boolean needToReload) {
-        this.needToReload = needToReload;
-    }
-    public boolean isNeedToReload() {
-        return needToReload;
-    }
-
-    //max Size of starclassmap
-    private static final int maxStarClassMapSize = 10;
-
-    //Panels
-    private ElitePanel miningPanel = new ElitePanel();
-    private ElitePanel marketPanel = new ElitePanel();
 
     //////////////////////
     //General Super Panel:
-    private ElitePanel mainPannel = new ElitePanel();
+    private ElitePanel mainPanel = new ElitePanel();
     private EliteTabbedPanel tabsPanel = new EliteTabbedPanel();
     private ElitePanel gShipInfoLine = new ElitePanel();
     private ElitePanel gStarsInfo = new ElitePanel();
     private ElitePanel gSystemInfoLine = new ElitePanel();
+    private ElitePanel miningPanel = new ElitePanel();
+    private ElitePanel marketPanel = new ElitePanel();
     //Labels
     private EliteLabel gShipModelLabel = new EliteLabel();
     private EliteLabel gShipNameLabel = new EliteLabel();
@@ -41,54 +30,12 @@ public final class ChampignonScreen extends JFrame implements ActionListener {
     private EliteLabel gMainStarClassTextLabel = new EliteLabel("Main Star Class: ");
     private EliteLabel gMainStarClassLabel = new EliteLabel("?");
     private EliteLabel gStarClassMapTextLabel = new EliteLabel("System Stars: ");
-    private static EliteLabel[] gStarClassMapLabel = new EliteLabel[maxStarClassMapSize];
+    private static EliteLabel[] gStarClassMapLabel = new EliteLabel[_maxStarClassMapSize];
     private EliteLabel gSystemLabel = new EliteLabel("System: ?");
     private EliteLabel gSystemPopulationLabel = new EliteLabel("Population: ?");
     private EliteLabel gSystemSecurityLabel = new EliteLabel();
     private EliteLabel gSystemAllegianceLabel = new EliteLabel();
-    //Setters
-    public void setgShipModelLabel(String text) {
-        gShipModelLabel.setText(text);
-    }
-    public void setgShipNameLabel(String text) {
-        gShipNameLabel.setText(text);
-    }
-    public void setgMoneyLabel(int value) {
-        gMoneyLabel.setText("Credits: "+value);
-    }
-    public void setgFuelLabel(float value,float capacity) {
-        gFuelLabel.setText("Fuel: "+df.format(value)+" / "+df.format(capacity)+"t");
-    }
-    public void setgMainStarClassLabel(String text) {
-        gMainStarClassLabel.setText(text);
-        if (text != null && hydrogenStarClass.contains(text)){
-            gMainStarClassLabel.setForeground(starClassColorMap.get(text));
-        }else{
-            gMainStarClassLabel.setForeground(textEliteColor);
-        }
-    }
-    public void setgSystemLabel(String text) {
-        gSystemLabel.setText("System: "+text);
-    }
-    public void setgSystemPopulationLabel(int value) {
-        gSystemPopulationLabel.setText("Population: "+value);
-    }
-    public void setgSystemSecurityLabel(String text) {
-        if(text.equals("")){
-            gSystemSecurityLabel.setText("");
-        }else{
-            gSystemSecurityLabel.setText("Secutity: "+text);
-        }
-    }
-    public void setgSystemAllegianceLabel(String text) {
-        if(text.equals("")){
-            gSystemAllegianceLabel.setText("");
-        }else{
-            gSystemAllegianceLabel.setText("Allegiance: "+text);
-        }
-    }
 
-    //////////////////
     //Discovery Tab
     private ElitePanel discoveryPanel = new ElitePanel();
     private EliteTabbedPanel dTabbedLeftPanel = new EliteTabbedPanel();
@@ -98,53 +45,42 @@ public final class ChampignonScreen extends JFrame implements ActionListener {
     private EliteTable dSubTabCodexTable = new EliteTable();
     private ElitePanel dSubRightPanel = new ElitePanel();
 
-    //////////////////
     //Combat Tab
     private ElitePanel combatPanel = new ElitePanel();
     private ElitePanel cGameModeLine = new ElitePanel();
-    //Labels
     private EliteLabel cGameModeLabel =  new EliteLabel();
-    //Setters
-    public void setcGameModeLabel(String text) {
-        this.cGameModeLabel.setText("Game Mode: "+text);
-    }
 
-    /////////////////
     //Settings Tab
     private ElitePanel settingsPanel = new ElitePanel();
-    private ElitePanel sReloadLine = new ElitePanel();
-    //Buttons
+    private ElitePanel sReloadPanelLine = new ElitePanel();
     private EliteButton sReloadBtn = new EliteButton("Reload latest Journal.log");
+    private EliteButton sExitBtn = new EliteButton("Exit program");
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //Constructor / SETUP /////////////////////////////////////////////////////////////////////////////////////////////
-
-    public ChampignonScreen() {
+    public ChampignonScreenJFrame(Controller controller) {
+        _controller = controller;
         //gStarClassMapLabel[0] = new EliteLabel();
-        ////////////////////
+
         //Windows properties
-        addListeners();//allow it to be draggable by clicking anywhere
+        addListeners();
         setLocationRelativeTo(null); //center the window
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//end the process on clicking the red cross
         setSize(1024, 720);
         setVisible(true);
-        setTitle("Champignon Sniffer 3000");
-        setFont(eliteFontPlain28);
-        setForeground(textEliteColor);
-        setBackground(backScreenEliteColor);
+        setTitle(PROGRAM_NAME);
+        setFont(ELITE_FONT_PLAIN_28);
+        setForeground(TEXT_ELITE_COLOR);
+        setBackground(BACK_SCREEN_ELITE_COLOR);
 
-        ////////////////////////////////////////////
         //Panels
-        //General panel
-        mainPannel.setLayout(new BoxLayout(mainPannel, BoxLayout.PAGE_AXIS)); //Vertical Box layout for the whole window
-        setContentPane(mainPannel);
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)); //Vertical Box layout for the whole window
+        setContentPane(mainPanel);
 
         //generalPanel.setLayout(new BoxLayout(generalPanel,BoxLayout.PAGE_AXIS));
-        mainPannel.add(gShipInfoLine);
-        mainPannel.add(new EliteSeparator(SwingConstants.HORIZONTAL));
-        mainPannel.add(gStarsInfo);
-        mainPannel.add(new EliteSeparator(SwingConstants.HORIZONTAL));
-        mainPannel.add(gSystemInfoLine);
+        mainPanel.add(gShipInfoLine);
+        mainPanel.add(new EliteSeparator(SwingConstants.HORIZONTAL));
+        mainPanel.add(gStarsInfo);
+        mainPanel.add(new EliteSeparator(SwingConstants.HORIZONTAL));
+        mainPanel.add(gSystemInfoLine);
 
         //Lines filling
         gShipInfoLine.setLayout(new BoxLayout(gShipInfoLine,BoxLayout.LINE_AXIS));
@@ -171,7 +107,7 @@ public final class ChampignonScreen extends JFrame implements ActionListener {
         gStarsInfo.add(new EliteSeparator(SwingConstants.VERTICAL));
         gStarsInfo.add(new EliteSpace(SwingConstants.HORIZONTAL));
         gStarsInfo.add(gStarClassMapTextLabel);
-        for (int i = 0; i <maxStarClassMapSize; i++ ) {
+        for (int i = 0; i < _maxStarClassMapSize; i++ ) {
             gStarClassMapLabel[i] = new EliteLabel();
             gStarsInfo.add(gStarClassMapLabel[i]);
         }
@@ -197,7 +133,7 @@ public final class ChampignonScreen extends JFrame implements ActionListener {
         gSystemInfoLine.setMaximumSize(new Dimension(4096,EliteLabel.getFontSize()+5));
 
         //Tab Panel
-        mainPannel.add(tabsPanel);
+        mainPanel.add(tabsPanel);
         ImageIcon icon = null; //createImageIcon("images/middle.gif");
         tabsPanel.addTab("Discovery", icon, discoveryPanel,"Info on current system and important celestial objects");
         //tabsPanel.setMnemonicAt(0, KeyEvent.VK_1); //to add keyboard shortcuts to access the tabs
@@ -210,7 +146,6 @@ public final class ChampignonScreen extends JFrame implements ActionListener {
         tabsPanel.addTab("Settings", icon, settingsPanel,"Change parameters of the Champignon Sniffer 3000");
         //tabsPanel.setMnemonicAt(4, KeyEvent.VK_5);
 
-        //////
         //Discovery Panel
         discoveryPanel.setLayout(new BoxLayout(discoveryPanel,BoxLayout.LINE_AXIS));
         discoveryPanel.add(dTabbedLeftPanel);
@@ -223,36 +158,75 @@ public final class ChampignonScreen extends JFrame implements ActionListener {
         dSubTabCodexScrollPane.add(dSubTabCodexTable);
         //.getImage(getClass().getResource("/package1/package2/dump.jpg")));
 
-        ///////
         //Combat Panel
         combatPanel.setLayout(new BoxLayout(combatPanel,BoxLayout.PAGE_AXIS));
         combatPanel.add(cGameModeLine);
-        //Lines filling
         cGameModeLine.setLayout(new BoxLayout(cGameModeLine,BoxLayout.LINE_AXIS));
         cGameModeLine.add(cGameModeLabel);
 
-        ///////
-        //Settigns Panel
+        //Settings Panel
         settingsPanel.setLayout(new BoxLayout(settingsPanel,BoxLayout.PAGE_AXIS));
-        settingsPanel.add(sReloadLine);
-        //Lines filling
-        sReloadLine.setLayout(new BoxLayout(sReloadLine,BoxLayout.LINE_AXIS));
-        sReloadLine.add(sReloadBtn);
+        settingsPanel.add(sReloadBtn);
         sReloadBtn.addActionListener(this);
+        settingsPanel.add(sExitBtn);
+        sExitBtn.addActionListener(this);
 
         refreshGUI();
     }//end Constructor
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //Methods /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Getter-Setters
+    public void setgShipModelLabel(String text) {
+        gShipModelLabel.setText(text);
+    }
+    public void setgShipNameLabel(String text) {
+        gShipNameLabel.setText(text);
+    }
+    public void setgMoneyLabel(int value) {
+        gMoneyLabel.setText("Credits: "+value);
+    }
+    public void setgFuelLabel(float value,float capacity) {
+        gFuelLabel.setText("Fuel: "+DECIMAL_FORMAT.format(value)+" / "+DECIMAL_FORMAT.format(capacity)+"t");
+    }
+    public void setgMainStarClassLabel(String text) {
+        gMainStarClassLabel.setText(text);
+        if (text != null && HYDROGEN_STAR_CLASS.contains(text)){
+            gMainStarClassLabel.setForeground(STAR_CLASS_COLOR_MAP.get(text));
+        }else{
+            gMainStarClassLabel.setForeground(TEXT_ELITE_COLOR);
+        }
+    }
+    public void setgSystemLabel(String text) {
+        gSystemLabel.setText("System: "+text);
+    }
+    public void setgSystemPopulationLabel(int value) {
+        gSystemPopulationLabel.setText("Population: "+value);
+    }
+    public void setgSystemSecurityLabel(String text) {
+        if(text.equals("")){
+            gSystemSecurityLabel.setText("");
+        }else{
+            gSystemSecurityLabel.setText("Secutity: "+text);
+        }
+    }
+    public void setgSystemAllegianceLabel(String text) {
+        if(text.equals("")){
+            gSystemAllegianceLabel.setText("");
+        }else{
+            gSystemAllegianceLabel.setText("Allegiance: "+text);
+        }
+    }
+    public void setcGameModeLabel(String text) {
+        this.cGameModeLabel.setText("Game Mode: "+text);
+    }
+
 
     public void updateStarClasses(Vector<String> starClassVec){
         //Cleaning the GUI
-        for (int i = 0; i < maxStarClassMapSize; i++){
+        for (int i = 0; i < _maxStarClassMapSize; i++){
             gStarClassMapLabel[i].setText("");
         }
         int vecSize = starClassVec.size();
-        if (vecSize > maxStarClassMapSize ){vecSize = maxStarClassMapSize;}
+        if (vecSize > _maxStarClassMapSize){vecSize = _maxStarClassMapSize;}
         for (int i = 0; i < vecSize; i++){
             String classMap = starClassVec.get(i);
             if (classMap != null){
@@ -261,11 +235,11 @@ public final class ChampignonScreen extends JFrame implements ActionListener {
                 }else{
                     gStarClassMapLabel[i].setText(classMap+", ");
                 }
-                Color starColor = starClassColorMap.get(classMap);
+                Color starColor = STAR_CLASS_COLOR_MAP.get(classMap);
                 if(starColor != null){
                     gStarClassMapLabel[i].setForeground(starColor);
                 }else{
-                    gStarClassMapLabel[i].setForeground(textEliteColor);
+                    gStarClassMapLabel[i].setForeground(TEXT_ELITE_COLOR);
                 }
             }
         }
@@ -297,9 +271,11 @@ public final class ChampignonScreen extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         /////////////////////////////////////
-        //Click on Bouton Reload
+        //Click on button Reload
         if (e.getSource() == sReloadBtn) {
-            needToReload = true;
+            _controller.setLoadLatestLog(true);
+        } else if(e.getSource() == sExitBtn){
+            _controller.setExitProgram();
         }
     }
 }

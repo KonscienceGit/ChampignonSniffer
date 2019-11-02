@@ -2,7 +2,7 @@ package dataclasses;
 
 import java.util.HashMap;
 import java.util.Map;
-import static resources.CommonMethods.*;
+import static tools.JsonParser.*;
 
 public class StarSystem {
     public Map<Integer, AstronomicalBody> _systemMap;
@@ -13,7 +13,7 @@ public class StarSystem {
     public int _nonBodyCount = 0;
     public double[] _starPos = new double[3];
 
-    //Created at FSDStartJump (aka wat the 4s contdown before jumping)
+    //Created at FSDStartJump (aka at the 4s countdown before jumping)
     public StarSystem(String line){
         _systemName = getStrContentOf("StarSystem",line);
         _systemAddress = getLongContentOf("SystemAddress",line);

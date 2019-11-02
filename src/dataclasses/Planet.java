@@ -1,7 +1,6 @@
 package dataclasses;
 
-import static resources.CommonMethods.*;
-import static resources.CommonMethods.getFloatContentOf;
+import static tools.JsonParser.*;
 
 public class Planet extends AstronomicalBody {
     public float _distanceFromArrivalLS = 0.0f;
@@ -44,9 +43,8 @@ public class Planet extends AstronomicalBody {
         _planetClass = getStrContentOf("PlanetClass",line);
         _gasGiant = _planetClass.contains("gas giant");
         _atmosphere = getStrContentOf("Atmosphere",line);
-        if (_gasGiant){
 
-        }else{
+        if (!_gasGiant) {
             _atmosphereType = getStrContentOf("AtmosphereType",line);
         }
 
@@ -65,9 +63,7 @@ public class Planet extends AstronomicalBody {
 
         _materials = getMaterialsCompoOf(line);
 
-        if (_gasGiant){
-
-        }else{
+        if (!_gasGiant) {
             _composition = getGroundCompoOf(line);
         }
 

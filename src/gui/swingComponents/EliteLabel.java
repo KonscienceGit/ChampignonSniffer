@@ -4,8 +4,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-import static resources.Constants.backScreenEliteColor;
-import static resources.Constants.textEliteColor;
+import static tools.Constants.BACK_SCREEN_ELITE_COLOR;
+import static tools.Constants.TEXT_ELITE_COLOR;
 
 public class EliteLabel extends JLabel {
     static final int fontSize = 28;
@@ -21,8 +21,8 @@ public class EliteLabel extends JLabel {
     }
 
     private void setThings(){
-        this.setForeground(textEliteColor);
-        this.setBackground(backScreenEliteColor);
+        this.setForeground(TEXT_ELITE_COLOR);
+        this.setBackground(BACK_SCREEN_ELITE_COLOR);
         //First border is the line around, second border is the margin around the text
         //this.setBorder(new CompoundBorder(BorderFactory.createLineBorder(blackEliteColor, 3), new EmptyBorder(10,10,10,10)));
         this.setBorder(new EmptyBorder(10,0,10,0));

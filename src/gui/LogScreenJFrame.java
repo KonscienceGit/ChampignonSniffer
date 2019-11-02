@@ -8,9 +8,9 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.Collections;
 import java.util.Vector;
 
-import static resources.Constants.*;
+import static tools.Constants.*;
 
-public class BasicLogScreen extends JFrame {
+public class LogScreenJFrame extends JFrame {
     private JPanel mainPannel;
 
     private JTable eventTable;
@@ -25,13 +25,13 @@ public class BasicLogScreen extends JFrame {
 
 
 
-    public BasicLogScreen() {
+    public LogScreenJFrame() {
         //allow it to be dragged by clicking anywhere
         addListeners();
 
         //Make it transparent
         setUndecorated(true);
-        setBackground(invisibleColor);
+        setBackground(INVISIBLE_COLOR);
         setLocationRelativeTo(null); //center the window
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//end the process on clicking the red cross
         setAlwaysOnTop(true); //this can hide the prompt to end the platform, beware
@@ -39,7 +39,7 @@ public class BasicLogScreen extends JFrame {
         mainPannel = new JPanel();
         mainPannel.setLayout(new BoxLayout(mainPannel, BoxLayout.PAGE_AXIS)); //Vertical Box layout for the whole window
         setContentPane(mainPannel);
-        mainPannel.setBackground(invisibleColor);
+        mainPannel.setBackground(INVISIBLE_COLOR);
 
         setSize(width, height);
         setLocation(4,0);
@@ -49,22 +49,22 @@ public class BasicLogScreen extends JFrame {
         dataVector = new Vector<>();
         eventTable = new JTable(dataVector, new Vector<>(Collections.singletonList("Event")));
         eventTable.setEnabled(false);
-        eventTable.setForeground(textEliteTrColor);
-        eventTable.setGridColor(invisibleColor);
-        eventTable.setBackground(invisibleColor);
+        eventTable.setForeground(TEXT_ELITE_TR_COLOR);
+        eventTable.setGridColor(INVISIBLE_COLOR);
+        eventTable.setBackground(INVISIBLE_COLOR);
         eventTable.setRowHeight(22);
         eventTable.setFont(new Font("Dosis", Font.PLAIN, 18));
         tableLine.add(eventTable);
-        tableLine.setBackground(blackEliteTrColor);
+        tableLine.setBackground(BLACK_ELITE_TR_COLOR);
 
         //Event highlight
         highlightEventLine = new JPanel();
         highlightEventLine.setLayout(new FlowLayout(FlowLayout.LEFT));
-        highlightEventLine.setBackground(blackEliteTrColor);
+        highlightEventLine.setBackground(BLACK_ELITE_TR_COLOR);
         highlightEventLabel = new JLabel("Event log");
-        highlightEventLabel.setForeground(textEliteTrColor);
+        highlightEventLabel.setForeground(BLACK_ELITE_TR_COLOR);
         highlightEventLabel.setOpaque(true);// if false (by default) it doesn't display its background
-        highlightEventLabel.setBackground(backScreenEliteTrColor);
+        highlightEventLabel.setBackground(BACK_SCREEN_ELITE_TR_COLOR);
         highlightEventLabel.setFont(new Font("Dosis", Font.PLAIN, 22));
         highlightEventLine.add(highlightEventLabel);
 

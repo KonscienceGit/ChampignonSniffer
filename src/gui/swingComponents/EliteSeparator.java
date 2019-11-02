@@ -3,8 +3,8 @@ package gui.swingComponents;
 import javax.swing.*;
 import java.awt.*;
 
-import static resources.Constants.blackEliteColor;
-import static resources.Constants.textEliteColor;
+import static tools.Constants.BLACK_ELITE_COLOR;
+import static tools.Constants.TEXT_ELITE_COLOR;
 
 public class EliteSeparator extends JSeparator {
     public EliteSeparator(int arg) {
@@ -15,7 +15,7 @@ public class EliteSeparator extends JSeparator {
             setMaximumSize(new Dimension(4096,1));
         }
 
-        setBackground(blackEliteColor);
-        setForeground(textEliteColor);
+        setBackground(BLACK_ELITE_COLOR);
+        setForeground(TEXT_ELITE_COLOR);
     }
 }
