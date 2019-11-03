@@ -15,12 +15,16 @@ public class StarSystem {
 
     //Created at FSDStartJump (aka at the 4s countdown before jumping)
     public StarSystem(String line){
-        _systemName = getStrContentOf("StarSystem",line);
         _systemAddress = getLongContentOf("SystemAddress",line);
-        String mainStarClass = getStrContentOf("StarClass",line);
         _systemMap = new HashMap<>();
-        _systemMap.put(0, new Star(_systemName, mainStarClass));
-        //printCreation();
+        String mainStarClass;
+        try {
+            _systemName = getStrContentOf("StarSystem",line);
+            mainStarClass = getStrContentOf("StarClass",line);
+            _systemMap.put(0, new Star(_systemName, mainStarClass));
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
     public void addBody(String line){

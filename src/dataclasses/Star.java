@@ -3,10 +3,6 @@ package dataclasses;
 import static tools.JsonParser.*;
 
 public class Star extends AstronomicalBody {
-    /*String _detailedScanContent = "";
-    String _bodyName = "";
-    int _bodyId = 0;*/
-
     public float _distanceFromArrivalLS = 0.0f;
     public String _starType = "";
     public float _stellarMass = 0.0f;
@@ -29,19 +25,23 @@ public class Star extends AstronomicalBody {
     public Star (String line){
         _detailedScanContent = line;
         _bodyType = BODY_STAR;
-        _bodyName = getStrContentOf("BodyName",line);
         _bodyId = getIntContentOf("BodyID",line);
         _distanceFromArrivalLS = getFloatContentOf("DistanceFromArrivalLS",line);
-        _starType = getStrContentOf("StarType", line);
         _stellarMass = getFloatContentOf("StellarMass",line);
         _radius = getDoubleContentOf("Radius",line);
         _absoluteMagnitude = getFloatContentOf("AbsoluteMagnitude",line);
         _age_MY = getLongContentOf("Age_MY",line);
         _surfaceTemperature = getDoubleContentOf("SurfaceTemperature",line);
-        _luminosity = getStrContentOf("Luminosity",line);
         _rotationPeriod = getDoubleContentOf("RotationPeriod",line);
         _axialTilt = getFloatContentOf("AxialTilt",line);
 
+        try {
+            _starType = getStrContentOf("StarType", line);
+            _bodyName = getStrContentOf("BodyName",line);
+            _luminosity = getStrContentOf("Luminosity",line);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
     public void print(){

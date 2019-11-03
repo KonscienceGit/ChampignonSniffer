@@ -27,29 +27,34 @@ public class Planet extends AstronomicalBody {
     public double _rotationPeriod = 0.0f;
     public float _axialTilt = 0.0f;
 
-    public boolean _gasGiant = false;
+    public boolean _isGasGiant = false;
 
 
     public Planet (String line){
         _detailedScanContent = line;
         _bodyType = BODY_PLANET;
-        _bodyName = getStrContentOf("BodyName",line);
         _bodyId = getIntContentOf("BodyID",line);
+
+        try {
+            _bodyName = getStrContentOf("BodyName",line);
+            _terraformState = getStrContentOf("TerraformState",line);
+            _planetClass = getStrContentOf("PlanetClass",line);
+            _atmosphere = getStrContentOf("Atmosphere",line);
+            if (!_isGasGiant) {
+                _atmosphereType = getStrContentOf("AtmosphereType",line);
+            }
+            _volcanism = getStrContentOf("Volcanism",line);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
 
         _distanceFromArrivalLS = getFloatContentOf("DistanceFromArrivalLS",line);
 
         _tidalLock = getBoolContentOf("TidalLock",line);
-        _terraformState = getStrContentOf("TerraformState",line);
-        _planetClass = getStrContentOf("PlanetClass",line);
-        _gasGiant = _planetClass.contains("gas giant");
-        _atmosphere = getStrContentOf("Atmosphere",line);
+        _isGasGiant = _planetClass.contains("gas giant");
 
-        if (!_gasGiant) {
-            _atmosphereType = getStrContentOf("AtmosphereType",line);
-        }
 
         _atmosphereComposition = getAtmosCompoOf(line);
-        _volcanism = getStrContentOf("Volcanism",line);
         _massEM = getFloatContentOf("MassEM",line);
 
         _radius = getDoubleContentOf("Radius",line);
@@ -63,7 +68,7 @@ public class Planet extends AstronomicalBody {
 
         _materials = getMaterialsCompoOf(line);
 
-        if (!_gasGiant) {
+        if (!_isGasGiant) {
             _composition = getGroundCompoOf(line);
         }
 

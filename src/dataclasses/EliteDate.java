@@ -9,12 +9,16 @@ public class EliteDate {
     private byte _seconds;
 
     public EliteDate(String timestamp){
-        _year = Short.parseShort(timestamp.substring(0,4));
-        _month = Byte.parseByte(timestamp.substring(5,7));
-        _day = Byte.parseByte(timestamp.substring(8,10));
-        _hours = Byte.parseByte(timestamp.substring(11,13));
-        _minutes = Byte.parseByte(timestamp.substring(14,16));
-        _seconds = Byte.parseByte(timestamp.substring(17,19));
+        try{
+            _year = Short.parseShort(timestamp.substring(0,4));
+            _month = Byte.parseByte(timestamp.substring(5,7));
+            _day = Byte.parseByte(timestamp.substring(8,10));
+            _hours = Byte.parseByte(timestamp.substring(11,13));
+            _minutes = Byte.parseByte(timestamp.substring(14,16));
+            _seconds = Byte.parseByte(timestamp.substring(17,19));
+        } catch (StringIndexOutOfBoundsException e){
+            throw new StringIndexOutOfBoundsException("Invalid timestamp: " + timestamp);
+        }
     }
 
     public EliteDate(short year, byte month, byte day, byte hours, byte minutes, byte seconds){

@@ -52,13 +52,11 @@ public final class ChampignonScreenJFrame extends JFrame implements ActionListen
 
     //Settings Tab
     private ElitePanel settingsPanel = new ElitePanel();
-    private ElitePanel sReloadPanelLine = new ElitePanel();
     private EliteButton sReloadBtn = new EliteButton("Reload latest Journal.log");
     private EliteButton sExitBtn = new EliteButton("Exit program");
 
     public ChampignonScreenJFrame(Controller controller) {
         _controller = controller;
-        //gStarClassMapLabel[0] = new EliteLabel();
 
         //Windows properties
         addListeners();
@@ -168,20 +166,22 @@ public final class ChampignonScreenJFrame extends JFrame implements ActionListen
         settingsPanel.setLayout(new BoxLayout(settingsPanel,BoxLayout.PAGE_AXIS));
         settingsPanel.add(sReloadBtn);
         sReloadBtn.addActionListener(this);
+        sReloadBtn.setHorizontalTextPosition(SwingConstants.CENTER);
         settingsPanel.add(sExitBtn);
         sExitBtn.addActionListener(this);
 
         refreshGUI();
     }//end Constructor
 
-    //Getter-Setters
+    //Setters
+    //Game Session, ship status
     public void setgShipModelLabel(String text) {
         gShipModelLabel.setText(text);
     }
     public void setgShipNameLabel(String text) {
         gShipNameLabel.setText(text);
     }
-    public void setgMoneyLabel(int value) {
+    public void setgMoneyLabel(long value) {
         gMoneyLabel.setText("Credits: "+value);
     }
     public void setgFuelLabel(float value,float capacity) {
@@ -195,6 +195,11 @@ public final class ChampignonScreenJFrame extends JFrame implements ActionListen
             gMainStarClassLabel.setForeground(TEXT_ELITE_COLOR);
         }
     }
+    public void setcGameModeLabel(String text) {
+        this.cGameModeLabel.setText("Game Mode: "+text);
+    }
+
+    //Star System update
     public void setgSystemLabel(String text) {
         gSystemLabel.setText("System: "+text);
     }
@@ -215,10 +220,6 @@ public final class ChampignonScreenJFrame extends JFrame implements ActionListen
             gSystemAllegianceLabel.setText("Allegiance: "+text);
         }
     }
-    public void setcGameModeLabel(String text) {
-        this.cGameModeLabel.setText("Game Mode: "+text);
-    }
-
 
     public void updateStarClasses(Vector<String> starClassVec){
         //Cleaning the GUI

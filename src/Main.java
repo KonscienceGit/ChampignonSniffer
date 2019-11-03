@@ -13,6 +13,7 @@ public class Main {
         while(!_controller.isExitProgram()){
             if (_controller.isLogFileUpdated()){
                 _controller.readJournal();
+                _controller.runScheduledUpdates();
             }else{
                 Thread.sleep(500);
             }
@@ -28,5 +29,6 @@ public class Main {
         _controller.getLastJournal();
         _controller.readJournal();
         _controller.checkFuelStatus(false);
+        _controller.runScheduledUpdates();
     }
 }
