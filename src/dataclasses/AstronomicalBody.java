@@ -14,16 +14,22 @@ public abstract class AstronomicalBody {
         System.out.println("This print is an empty method yet");
     }
 
-    public static AstronomicalBody getClass(String line){
-        if (line.contains("StarType")){
+    public static AstronomicalBody getClass(String line) {
+        try {
+            if (line.contains("StarType")){
             return new Star(line);
-        }else if(line.contains("Belt Cluster")){
-            System.out.println("return new BeltCluster(line);");
-            return new BeltCluster();
-        }else if(line.contains("PlanetClass")){
-            return new Planet(line);
-        } else {
+            }else if(line.contains("Belt Cluster")){
+                System.out.println("return new BeltCluster(line);");
+                return new BeltCluster();
+            }else if(line.contains("PlanetClass")){
+                return new Planet(line);
+            } else {
+                System.out.println("Unknown body type! : "+ line);
+                return null;
+            }
+        } catch (NoSuchFieldException e) {
             System.out.println("Unknown body type! : "+ line);
+            e.printStackTrace();
             return null;
         }
     }

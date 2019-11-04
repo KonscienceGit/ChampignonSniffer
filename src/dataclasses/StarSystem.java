@@ -14,11 +14,11 @@ public class StarSystem {
     public double[] _starPos = new double[3];
 
     //Created at FSDStartJump (aka at the 4s countdown before jumping)
-    public StarSystem(String line){
-        _systemAddress = getLongContentOf("SystemAddress",line);
+    public StarSystem(String line) {
         _systemMap = new HashMap<>();
-        String mainStarClass;
+        String mainStarClass = "";
         try {
+            _systemAddress = getLongContentOf("SystemAddress",line);
             _systemName = getStrContentOf("StarSystem",line);
             mainStarClass = getStrContentOf("StarClass",line);
             _systemMap.put(0, new Star(_systemName, mainStarClass));
@@ -27,7 +27,7 @@ public class StarSystem {
         }
     }
 
-    public void addBody(String line){
+    public void addBody(String line) throws NoSuchFieldException {
         int position = getIntContentOf("BodyID", line);
         _systemMap.put(position, AstronomicalBody.getClass(line) );
         _systemMap.get(position).print();

@@ -26,18 +26,11 @@ public abstract class JsonParser {
         }
     }
 
-    public static String getStrContentOf(String catName, String line) throws NoSuchFieldException {
-        return getStrContentOf(catName, line, 0);
-    }
-
-    public static String getStrContentOf(String catName, String line, int offset) throws NoSuchFieldException {
-        String catTag = getCategoryTag(catName);
-        int posCat = getIndexOfCatTag(catTag, line, offset);
-        int posBegin = posCat + catTag.length() +1;
-        int posEnd = line.indexOf('\"', posBegin);
-        return line.substring(posBegin, posEnd);
-    }
-
+    /**
+     * @param catName the name of the object ot extract.
+     * @param line the JSON object from which the target object will be extracted.
+     * @return the object's content enclosed by brackets {}.
+     */
     public static String getObject(String catName, String line) throws NoSuchFieldException, IllegalFormatException {
         String catTag = getCategoryTag(catName);
         int posCat = getIndexOfCatTag(catTag, line);
@@ -45,6 +38,12 @@ public abstract class JsonParser {
         return getObject(line, posBegin);
     }
 
+    /**
+     * Exctract the content of the first object encountered in the given line at the given position.
+     * @param line the line to extract the object from.
+     * @param posBegin the position at which the object extraction will start.
+     * @return the JSON object content enclosed by brackets {}.
+     */
     public static String getObject(String line, int posBegin){
         int curlyBracketToClose = 0;
         int objBegin = 0;
@@ -137,88 +136,72 @@ public abstract class JsonParser {
         return "";
     }
 
-    public static float getFloatContentOf(String catName, String line){
-        catName = "\""+catName+"\":";
-        int pos = line.indexOf(catName);
-        if (pos != -1 ) {
-            int posBegin = pos + catName.length();
-            int posEnd = line.indexOf(',', posBegin);
-            if(posEnd == -1){posEnd= line.indexOf(' ', posBegin);}
-            if(posEnd == -1){posEnd= line.indexOf('}', posBegin);}
-            return Float.parseFloat(line.substring(posBegin, posEnd));
-        }else{
-            printStack();
-            System.out.println("Line: " +getLineNumber()+" getFloatContentOf: Parsing error??");
-            return 0.0f;
-        }
+    /**
+     * Return the first string encountered after the field name "catName".
+     */
+    public static String getStrContentOf(String catName, String line) throws NoSuchFieldException {
+        return getStrContentOf(catName, line, 0);
     }
 
     /**
-     * @param catName Category Name
-     * @param line Json Line
+     * Return the first string encountered after the field name "catName", starting at position "offset".
      */
-    public static int getIntContentOf(String catName, String line){
-        catName = "\""+catName+"\":";
-        int pos = line.indexOf(catName);
-        if (pos != -1 ) {
-            int posBegin = pos + catName.length();
-            int posEnd = line.indexOf(',', posBegin);
-            if(posEnd == -1){posEnd= line.indexOf(' ', posBegin);}
-            if(posEnd == -1){posEnd= line.indexOf('}', posBegin);}
-            return Integer.parseInt(line.substring(posBegin, posEnd));
-        }else{
-            printStack();
-            System.out.println("Line: " +getLineNumber()+" getIntContentOf: Parsing error??");
-            return 0;
-        }
+    public static String getStrContentOf(String catName, String line, int offset) throws NoSuchFieldException {
+        String catTag = getCategoryTag(catName);
+        int posCat = getIndexOfCatTag(catTag, line, offset);
+        int posBegin = line.indexOf('\"', posCat + catTag.length()) + 1;
+        int posEnd = line.indexOf('\"', posBegin);
+        return line.substring(posBegin, posEnd);
     }
 
-    public static long getLongContentOf(String catName, String line){
-        catName = "\""+catName+"\":";
-        int pos = line.indexOf(catName);
-        if (pos != -1 ) {
-            int posBegin = pos + catName.length();
-            int posEnd = line.indexOf(',', posBegin);
-            if(posEnd == -1){posEnd= line.indexOf(' ', posBegin);}
-            if(posEnd == -1){posEnd= line.indexOf('}', posBegin);}
-            return Long.parseLong(line.substring(posBegin, posEnd));
-        }else{
-            printStack();
-            System.out.println("Line: " +getLineNumber()+" getLongContentOf: Parsing error??");
-            return 0;
+    /**
+     * Extract a JSON attribute (all primitives excepted Strings) and return it as a String.
+     */
+    private static String getAttributeSubstringOf(String attributeName, String line) throws NoSuchFieldException {
+        String catTag = getCategoryTag(attributeName);
+        int posCat = getIndexOfCatTag(catTag, line);
+        int posBegin = posCat + catTag.length();
+        int posEnd = line.indexOf(',', posBegin);
+        if(posEnd == -1){
+            posEnd= line.indexOf(' ', posBegin);
         }
+        if(posEnd == -1){
+            posEnd= line.indexOf('}', posBegin);
+        }
+        return line.substring(posBegin, posEnd);
     }
 
-    public static double getDoubleContentOf(String catName, String line){
-        catName = "\""+catName+"\":";
-        int pos = line.indexOf(catName);
-        if (pos != -1 ) {
-            int posBegin = pos + catName.length();
-            int posEnd = line.indexOf(',', posBegin);
-            if(posEnd == -1){posEnd= line.indexOf(' ', posBegin);}
-            if(posEnd == -1){posEnd= line.indexOf('}', posBegin);}
-            return Double.parseDouble(line.substring(posBegin, posEnd));
-        }else{
-            printStack();
-            System.out.println("Line: " +getLineNumber()+" getDoubleContentOf: Parsing error??");
-            return 0.0d;
-        }
+    /**
+     * Extract a JSON floating point number attribute from a JSON String.
+     */
+    public static float getFloatContentOf(String attributeName, String line) throws NoSuchFieldException {
+        return Float.parseFloat(getAttributeSubstringOf(attributeName, line));
     }
 
-    public static boolean getBoolContentOf(String catName, String line){
-        catName = "\""+catName+"\":";
-        int pos = line.indexOf(catName);
-        if (pos != -1 ) {
-            int posBegin = pos + catName.length();
-            int posEnd = line.indexOf(',', posBegin);
-            if(posEnd == -1){posEnd= line.indexOf(' ', posBegin);}
-            if(posEnd == -1){posEnd= line.indexOf('}', posBegin);}
-            return line.substring(posBegin, posEnd).contains("true");
-        }else{
-            printStack();
-            System.out.println("Line: " +getLineNumber()+" getBoolContentOf: Parsing error??");
-            return false;
-        }
+
+    /**
+     * Extract a JSON double precision floating point number attribute from a JSON String.
+     */
+    public static double getDoubleContentOf(String attributeName, String line) throws NoSuchFieldException {
+        return Double.parseDouble(getAttributeSubstringOf(attributeName, line));
+    }
+
+    /**
+     * Extract a JSON integer attribute from a JSON String.
+     */
+    public static int getIntContentOf(String attributeName, String line) throws NoSuchFieldException {
+        return Integer.parseInt(getAttributeSubstringOf(attributeName, line));
+    }
+
+    /**
+     * Extract a JSON long integer attribute from a JSON String.
+     */
+    public static long getLongContentOf(String attributeName, String line) throws NoSuchFieldException {
+        return Long.parseLong(getAttributeSubstringOf(attributeName, line));
+    }
+
+    public static boolean getBoolContentOf(String attributeName, String line) throws NoSuchFieldException {
+        return getAttributeSubstringOf(attributeName, line).contains("true");
     }
 
     public static double[] getStarPos(String line){

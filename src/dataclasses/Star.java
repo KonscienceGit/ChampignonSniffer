@@ -22,7 +22,7 @@ public class Star extends AstronomicalBody {
         _bodyType = BODY_STAR;
     }
 
-    public Star (String line){
+    public Star (String line) throws NoSuchFieldException {
         _detailedScanContent = line;
         _bodyType = BODY_STAR;
         _bodyId = getIntContentOf("BodyID",line);

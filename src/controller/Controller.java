@@ -38,12 +38,12 @@ public class Controller {
 
     private ChampignonScreenJFrame _champignonScr;
     private LogScreenJFrame _logScr;
-    private GameSession _gameSessionContext;
+    private GameSession _gameSession;
 
     public Controller(){
         _champignonScr = new ChampignonScreenJFrame(this);
         _logScr = new LogScreenJFrame();
-        _gameSessionContext = new GameSession(_champignonScr);
+        _gameSession = new GameSession(_champignonScr);
     }
 
     public boolean isLogFileUpdated(){
@@ -147,10 +147,10 @@ public class Controller {
         try{//TODO remove try catch when all methods are refactored into events.
             switch (eventName){
                 case "LoadGame":
-                    ((LoadGameEvent) event).updateContext(_gameSessionContext);
+                    ((LoadGameEvent) event).updateContext(_gameSession);
                     break;
                 case "Loadout":
-                    ((LoadoutEvent) event).updateContext(_gameSessionContext);
+                    ((LoadoutEvent) event).updateContext(_gameSession);
                     break;
                 case "Location":
                     handleLocationEvent(event.getEventString());
@@ -292,7 +292,7 @@ public class Controller {
         }
         System.out.println("SignalName_Localised: "+getStrContentOf("SignalName_Localised", line));
     }//TODO make a lookup table of usual events, is TimeRemaining a good indicator of a relevant signal?
-    private void handleFSSDiscoveryScanEvent(String line){
+    private void handleFSSDiscoveryScanEvent(String line) throws NoSuchFieldException {
         //"event":"FSSDiscoveryScan", "Progress":1.000000, "BodyCount":15, "NonBodyCount":0
         if (_starSystem == null){
             System.out.println("_starSystem hasn't been initialized !");
@@ -302,7 +302,7 @@ public class Controller {
             _starSystem._nonBodyCount = getIntContentOf("NonBodyCount", line);
         }
     }
-    private void handleFuelScoopEvent(String line){
+    private void handleFuelScoopEvent(String line) throws NoSuchFieldException {
         currentFuelLevel = getFloatContentOf("Total",line);
         _champignonScr.setgFuelLabel(currentFuelLevel,currentFuelCapacity);
         _logScr.addEvent("Refueling: Fuel at "+(int)(100*currentFuelLevel/currentFuelCapacity)+"%");
@@ -315,8 +315,8 @@ public class Controller {
         if(currentFuelLevel < currentJumpMaxFuelCost){
             if(jumping) {
                 eventMsg += "JUMP FUEL ALERT! FUEL LEVEL CRITICAL! ";
-                if(!haveFuelScoop){
-                    eventMsg += "NO FUEL SCOOP ONBOARD! ";
+                if(!_gameSession.haveFuelScoop()){
+                    eventMsg += "NO FUEL SCOOP ON-BOARD! ";
                 }
                 if (!_nextStarIsScoopable){
                     eventMsg += "NEXT STAR NOT MAIN-SEQUENCE! ";
@@ -326,11 +326,11 @@ public class Controller {
         }else if(currentFuelLevel < 2*currentJumpMaxFuelCost){
             if(jumping) {
                 eventMsg += "Jump Fuel Warning: Fuel level low! ";
-                if(!haveFuelScoop){
+                if(!_gameSession.haveFuelScoop()){
                     eventMsg += "No fuel scoop on board! ";
                 }
                 if (!_nextStarIsScoopable){
-                    eventMsg += "Next star is not a main-sequece star! ";
+                    eventMsg += "Next star is not a main-sequence star! ";
                 }
             }//end if jumping
             _logScr.addEvent(eventMsg);
@@ -345,8 +345,8 @@ public class Controller {
     }
 
     public void runScheduledUpdates() {
-        if(_gameSessionContext.is_updateGuiScheduled()){
-            _gameSessionContext.updateGUI();
+        if(_gameSession.is_updateGuiScheduled()){
+            _gameSession.updateGUI();
         }
     }
 }

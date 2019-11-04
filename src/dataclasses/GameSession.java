@@ -72,7 +72,7 @@ public class GameSession {
         return _JumpMaxFuelCost;
     }
 
-    public boolean isHaveFuelScoop() {
+    public boolean haveFuelScoop() {
         return _haveFuelScoop;
     }
 

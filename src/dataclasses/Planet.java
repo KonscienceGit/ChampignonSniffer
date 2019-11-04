@@ -30,23 +30,19 @@ public class Planet extends AstronomicalBody {
     public boolean _isGasGiant = false;
 
 
-    public Planet (String line){
+    public Planet (String line) throws NoSuchFieldException {
         _detailedScanContent = line;
         _bodyType = BODY_PLANET;
         _bodyId = getIntContentOf("BodyID",line);
 
-        try {
-            _bodyName = getStrContentOf("BodyName",line);
-            _terraformState = getStrContentOf("TerraformState",line);
-            _planetClass = getStrContentOf("PlanetClass",line);
-            _atmosphere = getStrContentOf("Atmosphere",line);
-            if (!_isGasGiant) {
-                _atmosphereType = getStrContentOf("AtmosphereType",line);
-            }
-            _volcanism = getStrContentOf("Volcanism",line);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+        _bodyName = getStrContentOf("BodyName",line);
+        _terraformState = getStrContentOf("TerraformState",line);
+        _planetClass = getStrContentOf("PlanetClass",line);
+        _atmosphere = getStrContentOf("Atmosphere",line);
+        if (!_isGasGiant) {
+            _atmosphereType = getStrContentOf("AtmosphereType",line);
         }
+        _volcanism = getStrContentOf("Volcanism",line);
 
         _distanceFromArrivalLS = getFloatContentOf("DistanceFromArrivalLS",line);
 
