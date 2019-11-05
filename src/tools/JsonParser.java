@@ -14,15 +14,11 @@ public abstract class JsonParser {
     }
 
     private static int getIndexOfCatTag(String catTag, String line) throws NoSuchFieldException {
-        return getIndexOfCatTag(catTag, line, 0);
-    }
-
-    private static int getIndexOfCatTag(String catTag, String line, int offset) throws NoSuchFieldException {
-        int pos = line.indexOf(catTag, offset);
+        int pos = line.indexOf(catTag);
         if (pos != -1 ) {
             return pos;
         } else{
-            throw new NoSuchFieldException("Line: " + getLineNumber() + "Couldn't find category: " + catTag);
+            throw new NoSuchFieldException("Line: " + getLineNumber() + " Couldn't find category: " + catTag);
         }
     }
 
@@ -31,34 +27,58 @@ public abstract class JsonParser {
      * @param line the JSON object from which the target object will be extracted.
      * @return the object's content enclosed by brackets {}.
      */
-    public static String getObject(String catName, String line) throws NoSuchFieldException, IllegalFormatException {
+    public static String getObjectSubstring(String catName, String line) throws NoSuchFieldException, IllegalFormatException {
         String catTag = getCategoryTag(catName);
         int posCat = getIndexOfCatTag(catTag, line);
         int posBegin = posCat + catTag.length();
-        return getObject(line, posBegin);
+        return getObjectSubstring(line, posBegin);
     }
 
     /**
-     * Exctract the content of the first object encountered in the given line at the given position.
+     * Extract the content of the first object encountered in the given line at the given position.
      * @param line the line to extract the object from.
      * @param posBegin the position at which the object extraction will start.
      * @return the JSON object content enclosed by brackets {}.
      */
-    public static String getObject(String line, int posBegin){
-        int curlyBracketToClose = 0;
+    private static String getObjectSubstring(String line, int posBegin){
+        return getSubstringBetweenEnclosingCharacters(line, posBegin, '{', '}');
+    }
+
+    /**
+     * Extract the content of the first object array encountered in the given line at the position of the given tag.
+     * @param catName the name of the array to extract.
+     * @param line the line to extract the array from.
+     * @return the array content as a string.
+     */
+    private static String getArraySubString(String catName, String line) throws NoSuchFieldException, IllegalFormatException {
+        String catTag = getCategoryTag(catName);
+        int posBegin = getIndexOfCatTag(catTag, line);
+        return getSubstringBetweenEnclosingCharacters(line, posBegin, '[', ']');
+    }
+
+    /**
+     * Extract a substring located between an opening character and a closing character, most likely either '{' and '}' or '[' and ']'"
+     * @param line the string to extract the substring from.
+     * @param posBegin the position at which to start extracting.
+     * @param openingChar the character which delimits the start of the substring.
+     * @param closingChar the character who delimits the closing of the substring, given the same amount of opening and closing character have been encountered.
+     * @return the substring, without its encasing same-level pair of opening and closing characters.
+     */
+    private static String getSubstringBetweenEnclosingCharacters(String line, int posBegin, char openingChar, char closingChar){
+        int closingCharacterToFind = 0;
         int objBegin = 0;
         boolean objBeginFound = false;
         int objEnd = 0;
         for (int i = posBegin; i < line.length(); i++){
-            if (line.charAt(i) == '{'){
+            if (line.charAt(i) == openingChar){
                 if(!objBeginFound){
                     objBeginFound = true;
-                    objBegin = i;
+                    objBegin = i +1;
                 }
-                curlyBracketToClose++;
-            } else if(objBeginFound && line.charAt(i) == '}'){
-                curlyBracketToClose--;
-                if (curlyBracketToClose == 0){
+                closingCharacterToFind++;
+            } else if(objBeginFound && line.charAt(i) == closingChar){
+                closingCharacterToFind--;
+                if (closingCharacterToFind == 0){
                     objEnd = i;
                     break;
                 }
@@ -67,59 +87,68 @@ public abstract class JsonParser {
         if(!objBeginFound){
             return "";
         }else if(objEnd == 0) {
-            throw new IllegalJsonFormatException("Couldn't find the closing bracket \"}\" of the JSON object");
+            throw new IllegalJsonFormatException("Couldn't find the closing character:" + closingChar + " of the substring to extract.");
         }
-        return line.substring(objBegin, objEnd+1);
+        return line.substring(objBegin, objEnd);
     }
 
-    public static String[] getArray(String catName, String line) throws NoSuchFieldException, IllegalFormatException {
-        List<String> objectArray = new ArrayList<>();
-        String arrayContent = getArrayContentSubString(catName, line);
-        boolean continueToExtract = true;
-        int pos = 0;
-        while (continueToExtract){
-            String object = getObject(arrayContent, pos);
-            if (object.isEmpty()){
-                continueToExtract = false;
-            }else{
-                objectArray.add(object);
-                pos += object.length();
-            }
-        }
-        String[] result = new String[objectArray.size()];
-        return objectArray.toArray(result);
-    }
-
-    private static String getArrayContentSubString(String catName, String line) throws NoSuchFieldException, IllegalFormatException {
-        String catTag = getCategoryTag(catName);
-        int posCat = getIndexOfCatTag(catTag, line);
-        int posBegin = posCat + catTag.length();
-        int squareBracketToClose = 0;
-        int posEnd = 0;
-        for (int i = posBegin; i < line.length(); i++){
-            if (line.charAt(i) == '['){
-                squareBracketToClose++;
-            } else if(line.charAt(i) == ']'){
-                squareBracketToClose--;
-                if (squareBracketToClose == 0){
-                    posEnd = i;
-                    break;
+    public static String[] getArray(String catName, String line) throws NoSuchFieldException {
+        List<String> strList = new ArrayList<>();
+        String currentStr = getArraySubString(catName, line);
+        boolean endOfArray = false;
+        while (!endOfArray){
+            endOfArray = currentStr.isEmpty();
+            if (!endOfArray){
+                char c = getNextChar(currentStr);
+                int pos = currentStr.indexOf(c);
+                switch (c){
+                    case ','://the array have another field
+                        currentStr = currentStr.substring(pos +1);
+                        break;
+                    case '\"'://the next field is a String
+                        String string = getStrAt(currentStr, pos);
+                        pos = currentStr.indexOf(string) + string.length() +2;
+                        strList.add(string);
+                        currentStr = currentStr.substring(pos);
+                        break;
+                    case '{'://the next field is an Object
+                        String object = getObjectSubstring(currentStr, pos);
+                        pos = currentStr.indexOf(object) + object.length() +2;
+                        strList.add(object);
+                        currentStr = currentStr.substring(pos);
+                        break;
+                    case ' '://the space was the last character, no more field in the array.
+                        endOfArray = true;
+                        break;
+                    default://the next field is a numeral, boolean or null value
+                        String value = getAttributeSubstringAt(currentStr, pos);
+                        pos = currentStr.indexOf(value) + value.length();
+                        strList.add(value);
+                        currentStr = currentStr.substring(pos);
                 }
             }
         }
-        if (posEnd == 0) {
-            throw new IllegalJsonFormatException("Couldn't find the closing bracket \"]\" of the JSON array");
-        }
-        return line.substring(posBegin, posEnd);
+        String[] strArray = new String[strList.size()];
+        return strList.toArray(strArray);
     }
 
     /**
-     * @param array the array to parse
-     * @param fieldName the name to seek in the line to extract.
-     * @return Return the first array line holding a field named as the given parameter. Return an empty string if not found.
+     * Return the next char in the given string that is not a ' ' space character.
      */
-    public static String getLineInArray(String[] array, String fieldName){
-        return getLineInArrayWithMentionOf(array,"\""+fieldName+"\":");
+    private static char getNextChar(String str){
+        return getNextCharAt(str, 0);
+    }
+
+    /**
+     * Return the next char in the given string that is not a ' ' space character, starting at the given position
+     */
+    private static char getNextCharAt(String str, int pos){
+        for (int i = pos; i < str.length(); i++){
+            if (str.charAt(i) != ' '){
+                return str.charAt(i);
+            }
+        }
+        return ' ';
     }
 
     /**
@@ -137,19 +166,20 @@ public abstract class JsonParser {
     }
 
     /**
-     * Return the first string encountered after the field name "catName".
+     * Return the first string encountered after the field name tag
      */
-    public static String getStrContentOf(String catName, String line) throws NoSuchFieldException {
-        return getStrContentOf(catName, line, 0);
+    public static String getStrContentOf(String fieldName, String line) throws NoSuchFieldException {
+        String catTag = getCategoryTag(fieldName);
+        int posCat = getIndexOfCatTag(catTag, line);
+        int posBegin = posCat + catTag.length();
+        return getStrAt(line, posBegin);
     }
 
     /**
-     * Return the first string encountered after the field name "catName", starting at position "offset".
+     * Return the first '"' encased string from the given string, starting at the given position.
      */
-    public static String getStrContentOf(String catName, String line, int offset) throws NoSuchFieldException {
-        String catTag = getCategoryTag(catName);
-        int posCat = getIndexOfCatTag(catTag, line, offset);
-        int posBegin = line.indexOf('\"', posCat + catTag.length()) + 1;
+    private static String getStrAt(String line, int pos){
+        int posBegin = line.indexOf('\"', pos) +1;
         int posEnd = line.indexOf('\"', posBegin);
         return line.substring(posBegin, posEnd);
     }
@@ -161,12 +191,20 @@ public abstract class JsonParser {
         String catTag = getCategoryTag(attributeName);
         int posCat = getIndexOfCatTag(catTag, line);
         int posBegin = posCat + catTag.length();
-        int posEnd = line.indexOf(',', posBegin);
+        return getAttributeSubstringAt(line, posBegin);
+    }
+
+    private static String getAttributeSubstringAt(String line, int pos){
+        int posBegin = line.indexOf(getNextCharAt(line, pos), pos);
+        int posEnd = line.indexOf(',', posBegin +1);
         if(posEnd == -1){
-            posEnd= line.indexOf(' ', posBegin);
+            posEnd= line.indexOf(' ', posBegin +1);
         }
         if(posEnd == -1){
-            posEnd= line.indexOf('}', posBegin);
+            posEnd= line.indexOf('}', posBegin +1);
+        }
+        if(posEnd == -1){
+            posEnd= line.indexOf(']', posBegin +1);
         }
         return line.substring(posBegin, posEnd);
     }
@@ -177,7 +215,6 @@ public abstract class JsonParser {
     public static float getFloatContentOf(String attributeName, String line) throws NoSuchFieldException {
         return Float.parseFloat(getAttributeSubstringOf(attributeName, line));
     }
-
 
     /**
      * Extract a JSON double precision floating point number attribute from a JSON String.
@@ -200,6 +237,9 @@ public abstract class JsonParser {
         return Long.parseLong(getAttributeSubstringOf(attributeName, line));
     }
 
+    /**
+     * Extract a JSON boolean attribute from a JSON String.
+     */
     public static boolean getBoolContentOf(String attributeName, String line) throws NoSuchFieldException {
         return getAttributeSubstringOf(attributeName, line).contains("true");
     }

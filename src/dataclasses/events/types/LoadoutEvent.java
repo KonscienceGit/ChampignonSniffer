@@ -35,14 +35,14 @@ public class LoadoutEvent extends Event {
         _unladenMass = getFloatContentOf("UnladenMass", eventStr);
         _cargoCapacity = getIntContentOf("CargoCapacity", eventStr);
         _maxJumpRange = getFloatContentOf("MaxJumpRange", eventStr);
-        String fuelCapacityObj = getObject("FuelCapacity", eventStr);
+        String fuelCapacityObj = getObjectSubstring("FuelCapacity", eventStr);
         _fuelCapacityMain = getFloatContentOf("Main", fuelCapacityObj);
         _fuelCapacityReserve = getFloatContentOf("Reserve", fuelCapacityObj);
         _rebuyCost = getLongContentOf("Rebuy", eventStr);
 
         String[] modulesArray = getArray("Modules", eventStr);
-        String fsdModule = getLineInArrayWithMentionOf(modulesArray, "FrameShiftDrive" );
-        _fsdModel = getStrContentOf("Item", fsdModule);
+        String fsdModuleObject = getLineInArrayWithMentionOf(modulesArray, "FrameShiftDrive" );
+        _fsdModel = getStrContentOf("Item", fsdModuleObject);
         String fuelScoopModule = getLineInArrayWithMentionOf(modulesArray, "fuelscoop_" );
         _haveFuelScoop = !fuelScoopModule.equals("");
     }
