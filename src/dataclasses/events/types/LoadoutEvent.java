@@ -22,9 +22,8 @@ public class LoadoutEvent extends Event {
     private final String _fsdModel;
     private final boolean _haveFuelScoop;
 
-    public LoadoutEvent(String eventStr, String eventName) throws NoSuchFieldException {
-        super(eventStr, eventName);
-        String eventObj = this.getEventObject();
+    public LoadoutEvent(String eventObj, String eventName) throws NoSuchFieldException {
+        super(eventObj, eventName);
         _shipModel = getStrContentOf("Ship",eventObj).replace("_"," ");
         _shipID = getIntContentOf("ShipID",eventObj);
         _shipName = getStrContentOf("ShipName",eventObj);

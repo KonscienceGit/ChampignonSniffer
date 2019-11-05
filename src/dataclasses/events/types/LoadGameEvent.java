@@ -19,25 +19,25 @@ public class LoadGameEvent extends Event {
     private final long _loan;
 
 
-    public LoadGameEvent(String eventStr, String eventName) throws NoSuchFieldException {
-        super(eventStr, eventName);
-        _commanderName = getStrContentOf("Commander", eventStr);
-        _isHorizonExpansionActive = getBoolContentOf("Horizons", eventStr);
-        _shipModelLocalised = getStrContentOf("Ship_Localised",eventStr);
-        _shipID = getIntContentOf("ShipID",eventStr);
-        _shipName = getStrContentOf("ShipName",eventStr);
-        _shipIdent = getStrContentOf("ShipIdent",eventStr);
-        _currentFuelLevel = getFloatContentOf("FuelLevel", eventStr);
-        _gameMode = getStrContentOf("GameMode", eventStr);
+    public LoadGameEvent(String eventObj, String eventName) throws NoSuchFieldException {
+        super(eventObj, eventName);
+        _commanderName = getStrContentOf("Commander", eventObj);
+        _isHorizonExpansionActive = getBoolContentOf("Horizons", eventObj);
+        _shipModelLocalised = getStrContentOf("Ship_Localised",eventObj);
+        _shipID = getIntContentOf("ShipID",eventObj);
+        _shipName = getStrContentOf("ShipName",eventObj);
+        _shipIdent = getStrContentOf("ShipIdent",eventObj);
+        _currentFuelLevel = getFloatContentOf("FuelLevel", eventObj);
+        _gameMode = getStrContentOf("GameMode", eventObj);
         String group;
         try{
-            group = getStrContentOf("Group", eventStr);
+            group = getStrContentOf("Group", eventObj);
         } catch (NoSuchFieldException e){
             group = "";
         }
         _group = group;
-        _credits = getLongContentOf("Credits", eventStr);
-        _loan = getLongContentOf("Loan", eventStr);
+        _credits = getLongContentOf("Credits", eventObj);
+        _loan = getLongContentOf("Loan", eventObj);
     }
 
     public void updateContext(GameSession gameSession) {
