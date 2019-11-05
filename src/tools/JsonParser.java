@@ -40,7 +40,7 @@ public abstract class JsonParser {
      * @param posBegin the position at which the object extraction will start.
      * @return the JSON object content enclosed by brackets {}.
      */
-    private static String getObjectSubstring(String line, int posBegin){
+    public static String getObjectSubstring(String line, int posBegin){
         return getSubstringBetweenEnclosingCharacters(line, posBegin, '{', '}');
     }
 

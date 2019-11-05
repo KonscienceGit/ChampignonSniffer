@@ -4,56 +4,58 @@ import dataclasses.events.types.*;
 import tools.JsonParser;
 
 import static tools.Constants.EventType.*;
+import static tools.JsonParser.getObjectSubstring;
 
 public abstract class EventFactory {
 
     public static Event getEvent(String eventStr){
-        String eventName = null;
+        String eventName = "";
+        String eventObj = "";
         try {
-            eventName = JsonParser.getStrContentOf("event", eventStr);
+            eventObj = getObjectSubstring(eventStr, 0);
+            eventName = JsonParser.getStrContentOf("event", eventObj);
 
             switch (eventName){
                 case FILE_HEADER:
-                    return new FileheaderEvent(eventStr, eventName);
+                    return new FileheaderEvent(eventObj, eventName);
 
                 case LOAD_GAME:
-                    return new LoadGameEvent(eventStr, eventName);
+                    return new LoadGameEvent(eventObj, eventName);
 
                 case LOADOUT:
-                    return new LoadoutEvent(eventStr, eventName);
+                    return new LoadoutEvent(eventObj, eventName);
 
                 case LOCATION:
-                    return new LocationEvent(eventStr, eventName);
+                    return new LocationEvent(eventObj, eventName);
 
                 case SCAN:
-                    return new ScanEvent(eventStr, eventName);
+                    return new ScanEvent(eventObj, eventName);
 
                 case FSD_TARGET:
-                    return new FsdTargetEvent(eventStr, eventName);
+                    return new FsdTargetEvent(eventObj, eventName);
 
                 case START_JUMP:
-                    return new StartJumpEvent(eventStr, eventName);
+                    return new StartJumpEvent(eventObj, eventName);
 
                 case FSD_JUMP:
-                    return new FsdJumpEvent(eventStr, eventName);
+                    return new FsdJumpEvent(eventObj, eventName);
 
                 case FSS_SIGNAL_DISCOVERED:
-                    return new FssSignalDiscoveredEvent(eventStr, eventName);
+                    return new FssSignalDiscoveredEvent(eventObj, eventName);
 
                 case FSS_DISCOVERY_SCAN:
-                    return new FssDiscoveryScanEvent(eventStr, eventName);
+                    return new FssDiscoveryScanEvent(eventObj, eventName);
 
                 case FUEL_SCOOP:
-                    return new FuelScoopEvent(eventStr, eventName);
+                    return new FuelScoopEvent(eventObj, eventName);
 
                 default:
-                    return new UnknownEvent(eventStr, eventName);
+                    return new UnknownEvent(eventObj, eventName);
             }
-
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
             try {
-                return new UnknownEvent(eventStr, eventName);
+                return new UnknownEvent(eventObj, eventName);
             } catch (NoSuchFieldException ex) {
                 ex.printStackTrace();
                 return null;

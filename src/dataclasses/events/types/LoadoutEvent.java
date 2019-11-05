@@ -24,26 +24,27 @@ public class LoadoutEvent extends Event {
 
     public LoadoutEvent(String eventStr, String eventName) throws NoSuchFieldException {
         super(eventStr, eventName);
-        _shipModel = getStrContentOf("Ship",eventStr).replace("_"," ");
-        _shipID = getIntContentOf("ShipID",eventStr);
-        _shipName = getStrContentOf("ShipName",eventStr);
-        _shipIdent = getStrContentOf("ShipIdent",eventStr);
+        String eventObj = this.getEventObject();
+        _shipModel = getStrContentOf("Ship",eventObj).replace("_"," ");
+        _shipID = getIntContentOf("ShipID",eventObj);
+        _shipName = getStrContentOf("ShipName",eventObj);
+        _shipIdent = getStrContentOf("ShipIdent",eventObj);
 
-        _hullValue = getLongContentOf("HullValue", eventStr);
-        _modulesValue = getLongContentOf("ModulesValue", eventStr);
-        _hullHealth = getFloatContentOf("HullHealth", eventStr);
-        _unladenMass = getFloatContentOf("UnladenMass", eventStr);
-        _cargoCapacity = getIntContentOf("CargoCapacity", eventStr);
-        _maxJumpRange = getFloatContentOf("MaxJumpRange", eventStr);
-        String fuelCapacityObj = getObjectSubstring("FuelCapacity", eventStr);
+        _hullValue = getLongContentOf("HullValue", eventObj);
+        _modulesValue = getLongContentOf("ModulesValue", eventObj);
+        _hullHealth = getFloatContentOf("HullHealth", eventObj);
+        _unladenMass = getFloatContentOf("UnladenMass", eventObj);
+        _cargoCapacity = getIntContentOf("CargoCapacity", eventObj);
+        _maxJumpRange = getFloatContentOf("MaxJumpRange", eventObj);
+        String fuelCapacityObj = getObjectSubstring("FuelCapacity", eventObj);
         _fuelCapacityMain = getFloatContentOf("Main", fuelCapacityObj);
         _fuelCapacityReserve = getFloatContentOf("Reserve", fuelCapacityObj);
-        _rebuyCost = getLongContentOf("Rebuy", eventStr);
+        _rebuyCost = getLongContentOf("Rebuy", eventObj);
 
-        String[] modulesArray = getArray("Modules", eventStr);
+        String[] modulesArray = getArray("Modules", eventObj);
         String fsdModuleObject = getLineInArrayWithMentionOf(modulesArray, "FrameShiftDrive" );
         _fsdModel = getStrContentOf("Item", fsdModuleObject);
-        String fuelScoopModule = getLineInArrayWithMentionOf(modulesArray, "fuelscoop_" );
+        String fuelScoopModule = getLineInArrayWithMentionOf(modulesArray, "fuelscoop" );
         _haveFuelScoop = !fuelScoopModule.equals("");
     }
 

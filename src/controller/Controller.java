@@ -153,28 +153,28 @@ public class Controller {
                     ((LoadoutEvent) event).updateContext(_gameSession);
                     break;
                 case "Location":
-                    handleLocationEvent(event.getEventString());
+                    handleLocationEvent(event.getEventObject());
                     break;
                 case "Scan":
-                    handleScanEvent(event.getEventString());
+                    handleScanEvent(event.getEventObject());
                     break;
                 case "FSDTarget":
-                    handleFSDTargetEvent(event.getEventString());
+                    handleFSDTargetEvent(event.getEventObject());
                     break;
                 case "StartJump": //FSD charging
-                    handleStartJumpEvent(event.getEventString());
+                    handleStartJumpEvent(event.getEventObject());
                     break;
                 case "FSDJump": //Jump
-                    handleFSDJumpEvent(event.getEventString());
+                    handleFSDJumpEvent(event.getEventObject());
                     break;
                 case "FSSSignalDiscovered":
-                    handleFSSSignalDiscoveredEvent(event.getEventString());
+                    handleFSSSignalDiscoveredEvent(event.getEventObject());
                     break;
                 case "FSSDiscoveryScan":
-                    handleFSSDiscoveryScanEvent(event.getEventString());
+                    handleFSSDiscoveryScanEvent(event.getEventObject());
                     break;
                 case "FuelScoop":
-                    handleFuelScoopEvent(event.getEventString());
+                    handleFuelScoopEvent(event.getEventObject());
                     break;
                 default:
             }
