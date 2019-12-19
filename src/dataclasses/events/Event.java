@@ -1,35 +1,45 @@
 package dataclasses.events;
 
-import dataclasses.EliteDate;
-
-import static tools.JsonParser.getObjectSubstring;
-import static tools.JsonParser.getStrContentOf;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import dataclasses.GameSession;
+import gui.ChampignonScreenJFrame;
 
 public abstract class Event {
-    private final String _eventObj;
-    private final String _eventName;
-    private final EliteDate _date;
+    private String timestamp;
+    private String event;
+    private boolean needUpdateGUI = false;
 
-    public Event(String eventObj, String eventName) throws NoSuchFieldException {
-        _eventObj = eventObj;
-        _eventName = eventName;
-        String eventTimestamp = getStrContentOf("timestamp", eventObj);
-        _date = new EliteDate(eventTimestamp);
+    public Event(){}
+
+    public void updateContext(GameSession gameSession){}
+
+    public void updateGUI(ChampignonScreenJFrame champScr){}
+
+    @JsonProperty("timestamp")
+    public String getTimestamp() {
+        return timestamp;
     }
 
-    public boolean isOfType(String eventType){
-        return _eventName.equals(eventType);
+    @JsonProperty("timestamp")
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public String getEventObject(){
-        return _eventObj;
+    @JsonProperty("event")
+    public String getEvent() {
+        return event;
     }
 
-    public String getEventName(){
-        return _eventName;
+    @JsonProperty("event")
+    public void setEvent(String event) {
+        this.event = event;
     }
 
-    public EliteDate getDate(){
-        return _date;
+    public boolean isNeedUpdateGUI() {
+        return needUpdateGUI;
+    }
+
+    public void setNeedUpdateGUI(boolean needUpdateGUI) {
+        this.needUpdateGUI = needUpdateGUI;
     }
 }

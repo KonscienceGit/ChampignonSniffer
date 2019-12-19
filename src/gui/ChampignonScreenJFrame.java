@@ -1,13 +1,22 @@
 package gui;
 
 import controller.Controller;
+import dataclasses.astronomy.StarSystem;
+import dataclasses.events.types.BodyScanEvent;
 import gui.swingComponents.*;
+import tools.ColorConverter;
+import tools.Constants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Vector;
 import static tools.Constants.*;
 
+@SuppressWarnings("FieldCanBeLocal")
 public final class ChampignonScreenJFrame extends JFrame implements ActionListener {
     private Controller _controller;
     private static final int _maxStarClassMapSize = 10;
@@ -25,7 +34,8 @@ public final class ChampignonScreenJFrame extends JFrame implements ActionListen
     //Labels
     private EliteLabel gShipModelLabel = new EliteLabel();
     private EliteLabel gShipNameLabel = new EliteLabel();
-    private EliteLabel gFuelLabel = new EliteLabel("Fuel: ");
+    private EliteLabel gFuelLevelLabel = new EliteLabel("Fuel: ?");
+    private EliteLabel gFuelCapacityLabel = new EliteLabel("/ ?");
     private EliteLabel gMoneyLabel =  new EliteLabel();
     private EliteLabel gMainStarClassTextLabel = new EliteLabel("Main Star Class: ");
     private EliteLabel gMainStarClassLabel = new EliteLabel("?");
@@ -89,7 +99,8 @@ public final class ChampignonScreenJFrame extends JFrame implements ActionListen
         gShipInfoLine.add(new EliteSpace(SwingConstants.HORIZONTAL));
         gShipInfoLine.add(new EliteSeparator(SwingConstants.VERTICAL));
         gShipInfoLine.add(new EliteSpace(SwingConstants.HORIZONTAL));
-        gShipInfoLine.add(gFuelLabel);
+        gShipInfoLine.add(gFuelLevelLabel);
+        gShipInfoLine.add(gFuelCapacityLabel);
         gShipInfoLine.add(new EliteSpace(SwingConstants.HORIZONTAL));
         gShipInfoLine.add(new EliteSeparator(SwingConstants.VERTICAL));
         gShipInfoLine.add(new EliteSpace(SwingConstants.HORIZONTAL));
@@ -174,6 +185,7 @@ public final class ChampignonScreenJFrame extends JFrame implements ActionListen
     }//end Constructor
 
     //Setters
+
     //Game Session, ship status
     public void setgShipModelLabel(String text) {
         gShipModelLabel.setText(text);
@@ -184,27 +196,29 @@ public final class ChampignonScreenJFrame extends JFrame implements ActionListen
     public void setgMoneyLabel(long value) {
         gMoneyLabel.setText("Credits: "+value);
     }
-    public void setgFuelLabel(float value,float capacity) {
-        gFuelLabel.setText("Fuel: "+DECIMAL_FORMAT.format(value)+" / "+DECIMAL_FORMAT.format(capacity)+"t");
+    public void setgFuelLevelLabel(float level){
+        gFuelLevelLabel.setText("Fuel: " + DECIMAL_FORMAT.format(level));
     }
-    public void setgMainStarClassLabel(String text) {
-        gMainStarClassLabel.setText(text);
-        if (text != null && HYDROGEN_STAR_CLASS.contains(text)){
-            gMainStarClassLabel.setForeground(STAR_CLASS_COLOR_MAP.get(text));
-        }else{
-            gMainStarClassLabel.setForeground(TEXT_ELITE_COLOR);
-        }
+    public void setgFuelCapacityLabel(float capacity){
+        gFuelCapacityLabel.setText(" / " + DECIMAL_FORMAT.format(capacity)+"t");
     }
     public void setcGameModeLabel(String text) {
         this.cGameModeLabel.setText("Game Mode: "+text);
     }
 
     //Star System update
+    public void setgMainStarClassLabel(String starClass, Color color) {
+        gMainStarClassLabel.setText(starClass);
+
+        gMainStarClassLabel.setForeground(Objects.requireNonNullElse(
+                color,
+                TEXT_ELITE_COLOR));
+    }
     public void setgSystemLabel(String text) {
         gSystemLabel.setText("System: "+text);
     }
-    public void setgSystemPopulationLabel(int value) {
-        gSystemPopulationLabel.setText("Population: "+value);
+    public void setgSystemPopulationLabel(long value) {
+        gSystemPopulationLabel.setText("Population: " + value);
     }
     public void setgSystemSecurityLabel(String text) {
         if(text.equals("")){
@@ -221,28 +235,35 @@ public final class ChampignonScreenJFrame extends JFrame implements ActionListen
         }
     }
 
-    public void updateStarClasses(Vector<String> starClassVec){
+    public void updateStarClasses(StarSystem starSystem){
         //Cleaning the GUI
         for (int i = 0; i < _maxStarClassMapSize; i++){
             gStarClassMapLabel[i].setText("");
         }
-        int vecSize = starClassVec.size();
-        if (vecSize > _maxStarClassMapSize){vecSize = _maxStarClassMapSize;}
-        for (int i = 0; i < vecSize; i++){
-            String classMap = starClassVec.get(i);
-            if (classMap != null){
-                if (i == vecSize-1){
-                    gStarClassMapLabel[i].setText(classMap);
-                }else{
-                    gStarClassMapLabel[i].setText(classMap+", ");
-                }
-                Color starColor = STAR_CLASS_COLOR_MAP.get(classMap);
-                if(starColor != null){
-                    gStarClassMapLabel[i].setForeground(starColor);
-                }else{
-                    gStarClassMapLabel[i].setForeground(TEXT_ELITE_COLOR);
-                }
+        Map<Integer, BodyScanEvent> map = starSystem.getSystemMap();
+        ArrayList<BodyScanEvent> bodyList = new ArrayList<>(map.values());
+        ArrayList<BodyScanEvent> starList = new ArrayList<>();
+        int starCount = 0;
+
+        //List stars
+        for (BodyScanEvent body: bodyList) {
+            if(starCount >= 10)break;
+            if(body.isStar()) {
+                starList.add(body);
+                starCount++;
             }
+        }
+
+        //Update the labels
+        for(int i = 0; i < starCount; i++){
+            BodyScanEvent star = starList.get(i);
+            if(i == starCount-1) {
+                gStarClassMapLabel[i].setText(star.getStarType());
+            }else {
+                gStarClassMapLabel[i].setText(star.getStarType()+", ");
+            }
+
+            gStarClassMapLabel[i].setForeground(Objects.requireNonNullElse(star.getStarColor(), TEXT_ELITE_COLOR));
         }
     }
 

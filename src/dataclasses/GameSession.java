@@ -1,180 +1,94 @@
 package dataclasses;
 
+import dataclasses.astronomy.StarSystem;
+import dataclasses.events.types.*;
+import dataclasses.events.types.navigation.FsdJumpEvent;
+import dataclasses.events.types.navigation.LocationEvent;
 import gui.ChampignonScreenJFrame;
-import tools.Constants;
-
-import static tools.JsonParser.*;
+import gui.LogScreenJFrame;
 
 public class GameSession {
-    private boolean _updateGuiScheduled = false;
-    private ChampignonScreenJFrame _champScr;
-    private String _shipName = "";
-    private String _shipModel = "";
-    private int _shipID = 0;
-    private String _shipIdentityTag = "";
-    private float _currentFuelLevel = 30.0f;
-    private float _fuelCapacity = 40.0f;
-    private float _fuelCapacityMain = 40.0f;
-    private float _fuelCapacityReserve = 0.0f;
-    private float _JumpMaxFuelCost = 10.0f;
-    private boolean _haveFuelScoop = true;
-    private String _gameMode = "";
-    private long _hullValue = 1;
-    private long _modulesValue = 1;
-    private long _shipTotalValue = 2;
-    private long _rebuyCost = 1;
-    private float _hullHealth = 1.0f;
-    private float _unladenMass = 1;
-    private int _cargoCapacity = 0;
-    private float _maxJumpRange = 1;
-    private String _fsdModel = "";
-    private String _commanderName = "";
-    private boolean _isHorizonExpansionActive = true;
-    private String _gameModeGroup = "";
-    private long _credits = 0;
-    private long _loan = 0;
+    private FuelStatus fuelStatus;
+    private LoadGameEvent currentLoadGame;
+    private LoadoutEvent currentLoadout;
+    private LocationEvent currentLocation;
+    private FileheaderEvent currentFileHeader;
+    private StarSystem currentStarSystem;
+    private StarSystem nextStarSystem;
+    private ChampignonScreenJFrame champScr;
 
-    public GameSession(ChampignonScreenJFrame champScr){
-        _champScr = champScr;
+    public GameSession(ChampignonScreenJFrame champScr, LogScreenJFrame logScreen){
+        this.fuelStatus = new FuelStatus(champScr, logScreen);
+        this.champScr = champScr;
     }
 
     public void updateGUI(){
-        _champScr.setgShipModelLabel(_shipModel);
-        _champScr.setgShipNameLabel(_shipName);
-        _champScr.setgMoneyLabel(_credits);
-        _champScr.setgFuelLabel(_currentFuelLevel,_fuelCapacity);
-        _champScr.setcGameModeLabel(_gameMode + " "+ _gameModeGroup);
+        getCurrentStarSystem().updateGUI(champScr);
+        fuelStatus.updateGUI();
     }
 
 
-    //Getters
-    public boolean is_updateGuiScheduled(){
-        return _updateGuiScheduled;
+    public void jump(FsdJumpEvent jumpEvent){
+        currentStarSystem = getNextStarSystem(jumpEvent);
+        nextStarSystem = null;
     }
 
-    public String getShipName() {
-        return _shipName;
+    public StarSystem getCurrentStarSystem() {
+        if (currentStarSystem == null){
+            currentStarSystem = new StarSystem();
+        }
+        return currentStarSystem;
     }
 
-    public String getShipModel() {
-        return _shipModel;
+    public StarSystem getNextStarSystem() {
+        if (nextStarSystem == null){
+            nextStarSystem = new StarSystem();
+        }
+        return nextStarSystem;
     }
 
-    public float getCurrentFuelLevel() {
-        return _currentFuelLevel;
+    private StarSystem getNextStarSystem(FsdJumpEvent jumpEvent) {
+        if (nextStarSystem == null){
+            nextStarSystem = new StarSystem(jumpEvent);
+        } else {
+            nextStarSystem.initializeWithJmp(jumpEvent);
+        }
+        return nextStarSystem;
     }
 
-    public float getFuelCapacity() {
-        return _fuelCapacity;
+    public FileheaderEvent getCurrentFileHeader() {
+        return currentFileHeader;
     }
 
-    public float getJumpMaxFuelCost() {
-        return _JumpMaxFuelCost;
+    public void setCurrentFileHeader(FileheaderEvent currentFileHeader) {
+        this.currentFileHeader = currentFileHeader;
     }
 
-    public boolean haveFuelScoop() {
-        return _haveFuelScoop;
+    public LoadoutEvent getCurrentLoadout() {
+        return currentLoadout;
     }
 
-    public String getGameMode() {
-        return _gameMode;
+    public void setCurrentLoadout(LoadoutEvent currentLoadout) {
+        this.currentLoadout = currentLoadout;
     }
 
-    public long getCredits() {
-        return _credits;
+    public LocationEvent getCurrentLocation() {
+        return currentLocation;
     }
 
-    //Setters
-    public void setShipName(String shipName) {
-        this._shipName = shipName;
+    public void setCurrentLocation(LocationEvent currentLocation) {
+        this.currentLocation = currentLocation;
     }
 
-    public void setShipModel(String shipModel) {
-        _shipModel = shipModel;
+    public LoadGameEvent getCurrentLoadGame() {
+        return currentLoadGame;
     }
 
-    public void setCurrentFuelLevel(float currentFuelLevel) {
-        _currentFuelLevel = currentFuelLevel;
+    public void setCurrentLoadGame(LoadGameEvent currentLoadGame) {
+        this.currentLoadGame = currentLoadGame;
     }
 
-    public void setFuelCapacity(float fuelCapacity) {
-        _fuelCapacity = fuelCapacity;
-    }
-
-    public void setFuelCapacity(float fuelCapacityMain, float fuelCapacityReserve) {
-        _fuelCapacityMain = fuelCapacityMain;
-        _fuelCapacityReserve = fuelCapacityReserve;
-        setFuelCapacity(_fuelCapacityMain + _fuelCapacityReserve);
-    }
-
-    public void setHaveFuelScoop(boolean haveFuelScoop) {
-        _haveFuelScoop = haveFuelScoop;
-    }
-
-    public void setGameMode(String gameMode) {
-        _gameMode = gameMode;
-    }
-
-    public void setCredits(long credits) {
-        _credits = credits;
-    }
-
-    public void setShipID(int shipID) {
-        _shipID = shipID;
-    }
-
-    public void setShipIdentityTag(String shipIdent) {
-        _shipIdentityTag = shipIdent;
-    }
-
-    public void setShipValue(long hullValue, long modulesValue) {
-        _hullValue = hullValue;
-        _modulesValue = modulesValue;
-        _shipTotalValue = _hullValue+ _modulesValue;
-    }
-
-    public void setRebuyCost(long rebuyCost) {
-        _rebuyCost = rebuyCost;
-    }
-
-    public void setHullHealth(float hullHealth) {
-        _hullHealth = hullHealth;
-    }
-
-    public void setUnladenMass(float unladenMass) {
-        _unladenMass = unladenMass;
-    }
-
-    public void setCargoCapacity(int cargoCapacity) {
-        _cargoCapacity = cargoCapacity;
-    }
-
-    public void setMaxJumpRange(float maxJumpRange) {
-        _maxJumpRange = maxJumpRange;
-    }
-
-    public void setFsdModel(String fsdModel) {
-        _fsdModel = fsdModel;
-        _JumpMaxFuelCost = Constants.FSD_FUEL_MAP.get(_fsdModel);
-    }
-
-    public void setCommanderName(String commanderName) {
-        _commanderName = commanderName;
-    }
-
-    public void setHorizonExpansionActivated(boolean isHorizonExpansionActive) {
-        _isHorizonExpansionActive = isHorizonExpansionActive;
-    }
-
-    public void setGameModeGroup(String group) {
-        _gameModeGroup = group;
-    }
-
-    public void setLoan(long loan) {
-        _loan = loan;
-    }
-
-    public void scheduleGuiUpdate(){
-        _updateGuiScheduled = true;
+    public FuelStatus getFuelStatus() {
+        return fuelStatus;
     }
 }

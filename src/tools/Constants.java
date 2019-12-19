@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public abstract class Constants {
     public static final String PROGRAM_NAME = "Champignon Sniffer 3000";
-    public static final String PROGRAM_VERSION = "20191102";
+    public static final String PROGRAM_VERSION = "20191214";
 
     public static final Color INVISIBLE_COLOR = new Color(0, 0, 0,0);
     public static final Color TEXT_ELITE_COLOR = new Color(255, 111, 0);
@@ -18,7 +18,7 @@ public abstract class Constants {
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
     public static final Font ELITE_FONT_PLAIN_28 = new Font("Dosis", Font.PLAIN, 28);
 
-    public static final HashMap<String, Color> STAR_CLASS_COLOR_MAP = new HashMap<String, Color>(){{
+    public static final HashMap<String, Color> STAR_CLASS_COLOR_MAP = new HashMap<>(){{
             put("O",new Color(146, 181, 255));
             put("B",new Color(162, 192, 255));
             put("A",new Color(213, 224, 255));
@@ -28,9 +28,17 @@ public abstract class Constants {
             put("M",new Color(255, 155, 61));
     }};
 
-    public static final String HYDROGEN_STAR_CLASS = "OBAFGKM";
 
-    public static final HashMap<String, Float> FSD_FUEL_MAP = new HashMap<String, Float>(){{
+    public static final String[] HYDROGEN_STAR_CLASS = {"O","B","A","F","G","K","M"};
+
+    public static boolean isScoopable(String starClass){
+        for(String scoopable : HYDROGEN_STAR_CLASS){
+            if (scoopable.equalsIgnoreCase(starClass)) return true;
+        }
+        return false;
+    }
+
+    public static final HashMap<String, Float> FSD_FUEL_MAP = new HashMap<>(){{
         put("int_hyperdrive_size2_class1",0.60f);
         put("int_hyperdrive_size2_class2",0.60f);
         put("int_hyperdrive_size2_class3",0.60f);
@@ -69,23 +77,15 @@ public abstract class Constants {
         public static final String LOADOUT = "Loadout";
         public static final String LOCATION = "Location";
         public static final String SCAN = "Scan";
-
-        /**
-         * CMD just sectioned a FSD system target. If multiple jump to the system, the event show the number of jumps.
-         */
+        /** CMD just sectioned a FSD system target. If multiple jump to the system, the event show the number of jumps.*/
         public static final String FSD_TARGET = "FSDTarget";
-
-        /**
-         * FSD Charging
-         */
+        /** FSD Charging */
         public static final String START_JUMP = "StartJump";
-
-        /**
-         * Actual FSD jump
-         */
+        /** Actual FSD jump */
         public static final String FSD_JUMP = "FSDJump";
         public static final String FSS_SIGNAL_DISCOVERED = "FSSSignalDiscovered";
         public static final String FSS_DISCOVERY_SCAN = "FSSDiscoveryScan";
         public static final String FUEL_SCOOP = "FuelScoop";
+        public static final String HEAT_WARNING = "HeatWarning";
     }
 }

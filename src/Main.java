@@ -15,7 +15,7 @@ public class Main {
                 _controller.readJournal();
                 _controller.runScheduledUpdates();
             }else{
-                Thread.sleep(500);
+                Thread.sleep(600);
             }
             if(_controller.isLoadLatestLog()){
                 _controller.setLoadLatestLog(false);

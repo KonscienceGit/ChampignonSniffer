@@ -1,76 +1,190 @@
 package dataclasses.events.types;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dataclasses.GameSession;
 import dataclasses.events.Event;
-
-import static tools.JsonParser.*;
+import gui.ChampignonScreenJFrame;
 
 public class LoadGameEvent extends Event {
-    private final String _commanderName;
-    private final boolean _isHorizonExpansionActive;
-    private final String _shipModelLocalised;
-    private final int _shipID;
-    private final String _shipName;
-    private final String _shipIdent;
-    private final float _currentFuelLevel;
-    private final String _gameMode;
-    private final String _group;
-    private final long _credits;
-    private final long _loan;
+    private String fid;
+    private String commanderName;
+    private boolean isHorizonExpansionActive;
+    private String ship;
+    private String shipLocalised;
+    private int shipID;
+    private String shipName;
+    private String shipIdent;
+    private float fuelLevel;
+    private float fuelCapacity;
+    private boolean startLanded = false;
+    private String gameMode;
+    private long credits;
+    private long loan;
+    private String group = "";
 
+    public LoadGameEvent(){}
 
-    public LoadGameEvent(String eventObj, String eventName) throws NoSuchFieldException {
-        super(eventObj, eventName);
-        _commanderName = getStrContentOf("Commander", eventObj);
-        _isHorizonExpansionActive = getBoolContentOf("Horizons", eventObj);
-        _shipModelLocalised = getStrContentOf("Ship_Localised",eventObj);
-        _shipID = getIntContentOf("ShipID",eventObj);
-        _shipName = getStrContentOf("ShipName",eventObj);
-        _shipIdent = getStrContentOf("ShipIdent",eventObj);
-        _currentFuelLevel = getFloatContentOf("FuelLevel", eventObj);
-        _gameMode = getStrContentOf("GameMode", eventObj);
-        String group;
-        try{
-            group = getStrContentOf("Group", eventObj);
-        } catch (NoSuchFieldException e){
-            group = "";
-        }
-        _group = group;
-        _credits = getLongContentOf("Credits", eventObj);
-        _loan = getLongContentOf("Loan", eventObj);
+    @Override
+    public void updateContext(GameSession gameSession) {
+        gameSession.setCurrentLoadGame(this);
+        gameSession.getFuelStatus().setFuelLevel(fuelLevel);
+        gameSession.getFuelStatus().setFuelCapacity(fuelCapacity);
+        this.setNeedUpdateGUI(true);
     }
 
-    public void updateContext(GameSession gameSession) {
-        gameSession.setCommanderName(_commanderName);
-        gameSession.setHorizonExpansionActivated(_isHorizonExpansionActive);
-        gameSession.setShipModel(_shipModelLocalised);
-        gameSession.setShipID(_shipID);
-        gameSession.setShipName(_shipName);
-        gameSession.setShipIdentityTag(_shipIdent);
-        gameSession.setCurrentFuelLevel(_currentFuelLevel);
-        gameSession.setGameMode(_gameMode);
-        if (!_group.isEmpty()){
-            gameSession.setGameModeGroup(_group);
-        }
-        gameSession.setCredits(_credits);
-        gameSession.setLoan(_loan);
+    @Override
+    public void updateGUI(ChampignonScreenJFrame champScr){
+        champScr.setgShipNameLabel(shipName);
+        champScr.setgMoneyLabel(credits);
+        champScr.setcGameModeLabel(gameMode + " "+ group);
+    }
 
-        gameSession.scheduleGuiUpdate();
+    @JsonProperty("FID")
+    public String getFid() {
+        return fid;
+    }
+
+    @JsonProperty("FID")
+    public void setFid(String fid) {
+        this.fid = fid;
+    }
+
+    @JsonProperty("Commander")
+    public String getCommanderName() {
+        return commanderName;
+    }
+
+    @JsonProperty("Commander")
+    public void setCommanderName(String commanderName) {
+        this.commanderName = commanderName;
+    }
+
+    @JsonProperty("Horizons")
+    public boolean isHorizonExpansionActive() {
+        return isHorizonExpansionActive;
+    }
+
+    @JsonProperty("Horizons")
+    public void setHorizonExpansionActive(boolean horizonExpansionActive) {
+        isHorizonExpansionActive = horizonExpansionActive;
+    }
+
+    @JsonProperty("Ship")
+    public String getShip() {
+        return ship;
+    }
+
+    @JsonProperty("Ship")
+    public void setShip(String ship) {
+        this.ship = ship;
+    }
+
+    @JsonProperty("Ship_Localised")
+    public String getShipLocalised() {
+        return shipLocalised;
+    }
+
+    @JsonProperty("Ship_Localised")
+    public void setShipLocalised(String shipLocalised) {
+        this.shipLocalised = shipLocalised;
+    }
+
+    @JsonProperty("ShipID")
+    public int getShipID() {
+        return shipID;
+    }
+
+    @JsonProperty("ShipID")
+    public void setShipID(int shipID) {
+        this.shipID = shipID;
+    }
+
+    @JsonProperty("ShipName")
+    public String getShipName() {
+        return shipName;
+    }
+
+    @JsonProperty("ShipName")
+    public void setShipName(String shipName) {
+        this.shipName = shipName;
+    }
+
+    @JsonProperty("ShipIdent")
+    public String getShipIdent() {
+        return shipIdent;
+    }
+
+    @JsonProperty("ShipIdent")
+    public void setShipIdent(String shipIdent) {
+        this.shipIdent = shipIdent;
+    }
+
+    @JsonProperty("FuelLevel")
+    public float getFuelLevel() {
+        return fuelLevel;
+    }
+
+    @JsonProperty("FuelLevel")
+    public void setFuelLevel(float fuelLevel) {
+        this.fuelLevel = fuelLevel;
+    }
+
+    @JsonProperty("FuelCapacity")
+    public float getFuelCapacity() {
+        return fuelCapacity;
+    }
+
+    @JsonProperty("FuelCapacity")
+    public void setFuelCapacity(float fuelCapacity) {
+        this.fuelCapacity = fuelCapacity;
+    }
+
+    @JsonProperty("StartLanded")
+    public boolean isStartLanded() {
+        return startLanded;
+    }
+
+    @JsonProperty("StartLanded")
+    public void setStartLanded(boolean startLanded) {
+        this.startLanded = startLanded;
+    }
+
+    @JsonProperty("GameMode")
+    public String getGameMode() {
+        return gameMode;
+    }
+
+    @JsonProperty("GameMode")
+    public void setGameMode(String gameMode) {
+        this.gameMode = gameMode;
+    }
+    @JsonProperty("Credits")
+    public long getCredits() {
+        return credits;
+    }
+
+    @JsonProperty("Credits")
+    public void setCredits(long credits) {
+        this.credits = credits;
+    }
+
+    @JsonProperty("Loan")
+    public long getLoan() {
+        return loan;
+    }
+
+    @JsonProperty("Loan")
+    public void setLoan(long loan) {
+        this.loan = loan;
+    }
+
+    @JsonProperty("Group")
+    public String getGroup() {
+        return group;
+    }
+
+    @JsonProperty("Group")
+    public void setGroup(String group) {
+        this.group = group;
     }
 }
-
-
-/* as of 03/11/2019
-{ "timestamp":"2019-11-03T16:04:36Z", "event":"LoadGame",
-"FID":"F2925166",
-"Commander":"Konscience",
-"Horizons":true,
-"Ship":"Krait_MkII",
-"Ship_Localised":"Krait Mk II",
-"ShipID":10, "ShipName":"KRT - Krieger", "ShipIdent":"KRT-KG",
-"FuelLevel":22.051260, "FuelCapacity":32.000000,
-"GameMode":"Group",
-"Group":"Mobius",
-"Credits":247532410,
-"Loan":0 }
- */
