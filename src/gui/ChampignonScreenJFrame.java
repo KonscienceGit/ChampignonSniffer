@@ -5,7 +5,6 @@ import dataclasses.astronomy.StarSystem;
 import dataclasses.events.types.BodyScanEvent;
 import gui.swingComponents.*;
 import tools.ColorConverter;
-import tools.Constants;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +12,6 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Vector;
 import static tools.Constants.*;
 
 @SuppressWarnings("FieldCanBeLocal")

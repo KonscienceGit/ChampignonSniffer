@@ -8,7 +8,8 @@ import dataclasses.events.types.navigation.FsdJumpEvent;
 import dataclasses.events.types.navigation.FsdTargetEvent;
 import dataclasses.events.types.navigation.LocationEvent;
 import dataclasses.events.types.navigation.StartJumpEvent;
-import dataclasses.events.types.warning.HeatWarning;
+import dataclasses.events.types.warnings.HeatWarning;
+import tools.JacksonMapper;
 import tools.JsonParser;
 import tools.TerminalLogger;
 
@@ -20,7 +21,7 @@ public abstract class EventFactory {
         String eventName;
         try {
             eventName = JsonParser.getStrContentOf("event", eventObj);
-            ObjectMapper jksMapper = new ObjectMapper();
+            ObjectMapper jksMapper = JacksonMapper.getMapper();
             //jksMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
             switch (eventName){

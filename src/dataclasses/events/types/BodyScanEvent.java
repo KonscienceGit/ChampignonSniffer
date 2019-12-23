@@ -5,7 +5,6 @@ import dataclasses.GameSession;
 import dataclasses.astronomy.Composition;
 import dataclasses.astronomy.Material;
 import dataclasses.events.Event;
-import gui.ChampignonScreenJFrame;
 import tools.ColorConverter;
 import tools.Constants;
 import tools.exceptions.NotABodyException;

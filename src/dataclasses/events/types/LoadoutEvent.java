@@ -3,7 +3,7 @@ package dataclasses.events.types;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dataclasses.GameSession;
 import dataclasses.events.Event;
-import dataclasses.modules.Module;
+import dataclasses.Module;
 import java.util.List;
 
 public class LoadoutEvent extends Event {
